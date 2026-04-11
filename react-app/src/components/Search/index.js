@@ -17,7 +17,7 @@ const Search = () => {
 	const [type, setType] = useState("");
 	const [bed, setBed] = useState(0);
 	const [bath, setBath] = useState(0);
-	const [center, setCenter] = useState({ lat: 34.0522, lng: 118.2437 });
+	const [center, setCenter] = useState({ lat: 43.6629, lng: -79.3957 });
 	const [propArr, setPropArr] = useState([]);
 	const [over, setOver] = useState({ id: 0 });
 	const [url, setUrl] = useState("");
@@ -62,11 +62,14 @@ const Search = () => {
 		} else setCenter({ lat: 34.0522, lng: 118.2437 });
 	}, [propArr]);
 
+	const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+	const googleMapURL = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.exp&libraries=geometry,drawing,places`;
+
 	return (
 		<main className="search-pg-ctrl">
 			<MyMap
 				isMarkerShown
-				googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCV1aH4qqDr2uUEG4I9FKeB6scau4FWuWw&v=3.exp&libraries=geometry,drawing,places"
+				googleMapURL={googleMapURL}
 				loadingElement={<div style={{ height: `100%` }} />}
 				containerElement={<div className="map-ctnr" />}
 				mapElement={<div style={{ height: `100%` }} />}

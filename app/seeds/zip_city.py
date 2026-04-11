@@ -6,28 +6,30 @@ def undo_zip_city():
 
 
 def seed_zip_city():
-    zip_city27108 = ZipCity(city="Los Angeles", zip="90001", state_id=5)
-    zip_city27109 = ZipCity(city="Los Angeles", zip="90002", state_id=5)
-    zip_city27110 = ZipCity(city="Vernon", zip="90058", state_id=5)
-    zip_city27111 = ZipCity(city="Los Angeles", zip="90004", state_id=5)
-    zip_city27112 = ZipCity(city="Los Angeles", zip="90075", state_id=5)
-    zip_city27113 = ZipCity(city="Los Angeles", zip="90007", state_id=5)
-    zip_city27114 = ZipCity(city="Los Angeles", zip="90008", state_id=5)
-    zip_city27115 = ZipCity(city="Los Angeles", zip="90009", state_id=5)
-    zip_city27116 = ZipCity(city="Los Angeles", zip="90011", state_id=5)
-    zip_city27117 = ZipCity(city="Los Angeles", zip="90012", state_id=5)
-    zip_city27118 = ZipCity(city="Los Angeles", zip="90013", state_id=5)
-    zip_city27119 = ZipCity(city="Los Angeles", zip="90015", state_id=5)
-    zip_city27120 = ZipCity(city="Los Angeles", zip="90020", state_id=5)
-    zip_city27121 = ZipCity(city="Los Angeles", zip="90016", state_id=5)
-    zip_city27122 = ZipCity(city="Los Angeles", zip="90057", state_id=5)
-    zip_city27123 = ZipCity(city="Los Angeles", zip="90018", state_id=5)
-    zip_city27124 = ZipCity(city="Los Angeles", zip="90021", state_id=5)
-    zip_city27125 = ZipCity(city="Los Angeles", zip="90022", state_id=5)
-    zip_city27126 = ZipCity(city="Los Angeles", zip="90023", state_id=5)
-    zip_city27127 = ZipCity(city="Los Angeles", zip="90049", state_id=5)
-    zip_city27128 = ZipCity(city="Los Angeles", zip="90024", state_id=5)
-    zip_city27129 = ZipCity(city="Los Angeles", zip="90064", state_id=5)
+    zip_cities = [
+        ZipCity(city="Toronto", zip="M5H 2R2", state_id=1),
+        ZipCity(city="Toronto", zip="M5V 2B5", state_id=1),
+        ZipCity(city="Toronto", zip="M4W 3E8", state_id=1),
+        ZipCity(city="Toronto", zip="M5H 4A8", state_id=1),
+        ZipCity(city="Toronto", zip="M6K 1E4", state_id=1),
+        ZipCity(city="Toronto", zip="M5T 2W4", state_id=1),
+        ZipCity(city="Toronto", zip="M6R 3B9", state_id=1),
+        ZipCity(city="Toronto", zip="M4X 1K6", state_id=1),
+        ZipCity(city="Toronto", zip="M5R 3P3", state_id=1),
+        ZipCity(city="Toronto", zip="M5J 2R1", state_id=1),
+        ZipCity(city="Mississauga", zip="L5A 3Z8", state_id=1),
+        ZipCity(city="Mississauga", zip="L4W 4Y4", state_id=1),
+        ZipCity(city="Etobicoke", zip="M9C 1C7", state_id=1),
+        ZipCity(city="Scarborough", zip="M1B 5M5", state_id=1),
+        ZipCity(city="North York", zip="M2N 5X9", state_id=1),
+        ZipCity(city="Markham", zip="L6E 1W4", state_id=1),
+        ZipCity(city="Richmond Hill", zip="L4C 1E8", state_id=1),
+        ZipCity(city="Brampton", zip="L6T 5P1", state_id=1),
+        ZipCity(city="Hamilton", zip="L8P 4X5", state_id=1),
+        ZipCity(city="London", zip="N6A 1P8", state_id=1),
+    ]
+    db.session.add_all(zip_cities)
+    db.session.commit()
     zip_city27130 = ZipCity(city="Los Angeles", zip="90025", state_id=5)
     zip_city27131 = ZipCity(city="Los Angeles", zip="90026", state_id=5)
     zip_city27132 = ZipCity(city="Los Angeles", zip="90027", state_id=5)

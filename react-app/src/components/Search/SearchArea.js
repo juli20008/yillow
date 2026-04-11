@@ -71,11 +71,14 @@ const SearchArea = () => {
 		} else setCenter({ lat: 39.5, lng: -98.35 });
 	}, [propArr]);
 
+	const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+	const googleMapURL = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.exp&libraries=geometry,drawing,places`;
+
 	return (
 		<main className="search-pg-ctrl">
 			<MyMap
 				isMarkerShown
-				googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCV1aH4qqDr2uUEG4I9FKeB6scau4FWuWw&v=3.exp&libraries=geometry,drawing,places"
+				googleMapURL={googleMapURL}
 				loadingElement={<div style={{ height: `100%` }} />}
 				containerElement={<div className="map-ctnr" />}
 				mapElement={<div style={{ height: `100%` }} />}
