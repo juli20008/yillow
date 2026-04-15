@@ -2,20 +2,17 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import LogoutButton from "../../auth/LogoutButton";
 
-import logo from "../../../assets/logo-white.svg";
-
 const AgentBar = () => {
 	return (
 		<nav className="nav nav-agent">
 			<div className="nav-lf">
-				<NavLink to="/about">About</NavLink>
 				<NavLink to="/agents">Agent Finder</NavLink>
 				<NavLink to="/reviews" exact={true}>
 					My Reviews
 				</NavLink>
 			</div>
 			<NavLink to="/" exact={true}>
-				<img src={logo} alt="Yillow" />
+				<img src="/Yollow.png" alt="Yollow" />
 			</NavLink>
 			<div className="nav-rt">
 				<NavLink to="/chats" exact={true}>

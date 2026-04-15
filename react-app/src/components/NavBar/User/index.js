@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import LogoutButton from "../../auth/LogoutButton";
 
-import logo from "../../../assets/logo-blue.svg";
 import no_photo from "../../../assets/no_photo.svg";
 
 import { Modal } from "../../../context/Modal";
@@ -37,15 +36,12 @@ const UserBar = () => {
 	return (
 		<nav className="nav">
 			<div className="nav-lf">
-				<NavLink to="/about" className="btn-font-lt">
-					About
-				</NavLink>
 				<NavLink to="/agents" className="btn-font-lt">
 					Agent Finder
 				</NavLink>
 			</div>
 			<NavLink to="/" exact={true}>
-				<img src={logo} alt="Yillow" />
+				<img src="/Yollow.png" alt="Yollow" />
 			</NavLink>
 			<div className="nav-rt">
 				<NavLink className="btn-font-lt" to="/chats" exact={true}>

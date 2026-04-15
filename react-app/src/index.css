@@ -57,6 +57,16 @@ body {
 	font-family: "Open Sans", sans-serif;
 }
 
+html.search-page-lock,
+body.search-page-lock {
+	height: 100%;
+	overflow: hidden;
+}
+
+#root {
+	min-height: 100%;
+}
+
 textarea:focus,
 input:focus {
 	outline: none;

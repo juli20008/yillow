@@ -6,13 +6,15 @@ import PropertyCard from "../Search/List/PropertyCard";
 
 const Splash = () => {
 	const history = useHistory();
+	const defaultGtaArea =
+		"/area/neLat=44.20&neLng=-78.90&swLat=43.30&swLng=-80.80&zoom=10";
 
 	const [search, setSearch] = useState("");
 	const [searchList, setSearchList] = useState([]);
 	const [searchFiltered, setSearchFiltered] = useState([]);
 	const [error, setError] = useState();
 	const [placeholder, setPlaceholder] = useState(
-		"Enter an address, city, or ZIP code"
+		"Enter an address, city, or Postal Code"
 	);
 	const [newlyListed, setNewlyListed] = useState([]);
 
@@ -32,7 +34,8 @@ const Splash = () => {
 			const searchTerm = search.split(" ").join("-");
 			history.push(`/search/${searchTerm}`);
 		} else {
-			setError("Please enter address, city, or zip code to begin");
+			setError("");
+			history.push(defaultGtaArea);
 		}
 	};
 
@@ -72,10 +75,10 @@ const Splash = () => {
 							value={search}
 							onChange={(e) => setSearch(e.target.value)}
 							onFocus={() =>
-								setPlaceholder('Don\'t know where to start? Try "San Diego"')
+								setPlaceholder('Don\'t know where to start? Try "Toronto"')
 							}
 							onBlur={() =>
-								setPlaceholder("Enter an address, city, or ZIP code")
+								setPlaceholder("Enter an address, city, or Postal Code")
 							}
 							ref={searchDivRef}
 						/>
@@ -105,7 +108,12 @@ const Splash = () => {
 				<section className="splash-newly-listed">
 					<div className="splash-newly-listed-head">
 						<h2>Newly Listed</h2>
-						<div className="splash-newly-listed-link">See More</div>
+						<div
+							className="splash-newly-listed-link"
+							onClick={() => history.push("/search/Toronto")}
+						>
+							See More
+						</div>
 					</div>
 					<div className="splash-newly-listed-grid">
 						{newlyListed.map((property) => (

@@ -7,7 +7,7 @@ export default function available(property) {
 	const today = new Date();
 
 	const appointments = [];
-	property?.appointments.forEach((appt) => {
+	property?.appointments?.forEach((appt) => {
 		appointments.push(new Date(appt).getTime());
 	});
 

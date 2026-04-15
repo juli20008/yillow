@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 
-import logo from "../../../assets/logo-blue.svg";
 import footer from "../../../assets/footer-art.svg";
 
 import RequestTour from "./RequestTour";
@@ -11,7 +10,7 @@ const Detail = ({ property, openTour }) => {
 	return (
 		<div className="property-detail-ctrl">
 			<div className="property-detail-top">
-				<img className="property-detail-logo" src={logo} alt="Yillow" />
+				<img className="property-detail-logo" src="/Yollow.png" alt="Yollow" />
 				<div>{/* <i className="fa-regular fa-heart"></i> Save */}</div>
 			</div>
 			<div className="property-detail-btm">
@@ -142,7 +141,7 @@ const Detail = ({ property, openTour }) => {
 					</div>
 					<div className="footer-ctrl">
 						<div className="footer-logo-wrap">
-							<img className="footer-logo" src={logo} alt="Yillow" />
+							<img className="footer-logo" src="/Yollow.png" alt="Yollow" />
 						</div>
 
 						<img src={footer} alt="Footer" />

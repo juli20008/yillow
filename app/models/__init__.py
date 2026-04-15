@@ -5,6 +5,7 @@ from .property import Property
 from .property_img import PropertyImg
 from .review import Review
 from .appointment import Appointment
+from .agent_availability import AgentAvailability
 from .agent_area import AgentArea
 from .zip_city import ZipCity
 from .channel import Channel

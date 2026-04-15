@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { login } from "../../../store/session";
+import { useNotification } from "../../../context/Notification";
 
 import LoginForm from "../../auth/LoginForm";
 import SignUpForm from "../../auth/SignUpForm";
 
 const Login = () => {
 	const dispatch = useDispatch();
+	const history = useHistory();
+	const { setToggleNotification, setNotificationMsg } = useNotification();
 	const [loginForm, setLoginForm] = useState(true);
 
 	const loginRef = useRef();
@@ -16,14 +20,34 @@ const Login = () => {
 		e.preventDefault();
 		const email = "demo@aa.io";
 		const password = "password";
-		await dispatch(login(email, password));
+		const data = await dispatch(login(email, password));
+		if (!data) {
+			history.push("/");
+		} else {
+			setToggleNotification("");
+			setNotificationMsg(data[0] || "Demo login failed");
+			setTimeout(() => {
+				setToggleNotification("notification-move");
+				setNotificationMsg("");
+			}, 2000);
+		}
 	};
 
 	const onAgentDemoLogin = async (e) => {
 		e.preventDefault();
 		const email = "agent1@user.com";
 		const password = "password";
-		await dispatch(login(email, password));
+		const data = await dispatch(login(email, password));
+		if (!data) {
+			history.push("/appointments");
+		} else {
+			setToggleNotification("");
+			setNotificationMsg(data[0] || "Agent demo login failed");
+			setTimeout(() => {
+				setToggleNotification("notification-move");
+				setNotificationMsg("");
+			}, 2000);
+		}
 	};
 
 	useEffect(() => {

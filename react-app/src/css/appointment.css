@@ -1,6 +1,7 @@
 .appointment-ctrl {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
+	align-items: start;
 }
 
 .appt-wrap {
@@ -250,6 +251,93 @@
 	grid-template-columns: repeat(2, 1fr);
 	gap: 20px;
 	width: 100%;
+}
+
+.availability-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 16px;
+	border-bottom: 1px solid #d7d7d7;
+	background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.availability-head {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.availability-title {
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.availability-note {
+	font-size: 13px;
+	color: #666;
+	line-height: 1.4;
+}
+
+.availability-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.availability-row {
+	display: grid;
+	grid-template-columns: 1.3fr 1fr 1fr;
+	gap: 10px;
+	align-items: center;
+}
+
+.availability-day {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.availability-row select {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid var(--blue2);
+	border-radius: 5px;
+	background-color: var(--lightblue);
+	font-size: 14px;
+}
+
+.availability-row select:disabled {
+	opacity: 0.5;
+}
+
+.availability-actions {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.availability-message {
+	font-size: 14px;
+	color: var(--blue2);
+}
+
+.appt-reassign-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	border: 1px solid var(--blue);
+	border-radius: 5px;
+	padding: 12px;
+	background: white;
+}
+
+.appt-reassign-row {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 10px;
+	align-items: center;
 }
 
 .appt-agent-reviews {

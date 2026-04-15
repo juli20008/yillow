@@ -62,10 +62,22 @@ def login():
     """
     Logs a user in
     """
+    payload = request.get_json(silent=True) or {}
+    if payload:
+        email = payload.get("email", "").strip()
+        password = payload.get("password", "")
+        user = User.query.filter(User.email == email).first()
+
+        if user and user.check_password(password):
+            login_user(user)
+            return user.to_dict()
+
+        return {'errors': ["Invalid email or password"]}, 401
+
     form = LoginForm()
     # Get the csrf_token from the request cookie and put it into the
     # form manually to validate_on_submit can be used
-    form['csrf_token'].data = request.cookies['csrf_token']
+    form['csrf_token'].data = request.cookies.get('csrf_token')
     if form.validate_on_submit():
         # Add the user to the session, we are logged in!
         user = User.query.filter(User.email == form.data['email']).first()
@@ -89,7 +101,7 @@ def sign_up():
     Creates a new user and logs them in
     """
     form = SignUpForm()
-    form['csrf_token'].data = request.cookies['csrf_token']
+    form['csrf_token'].data = request.cookies.get('csrf_token')
     if form.validate_on_submit():
 
         user = User(

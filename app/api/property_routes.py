@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from sqlalchemy.orm import selectinload
 from app.models import Property
 from app.models import User
 
@@ -14,13 +15,18 @@ property_routes = Blueprint('properties', __name__)
 @property_routes.route("/feed")
 def property_feed():
     properties = (
-        Property.query.order_by(Property.listing_date.desc(), Property.price.asc())
+        Property.query.options(
+            selectinload(Property.state),
+            selectinload(Property.listing_agent),
+            selectinload(Property.images),
+        )
+        .order_by(Property.listing_date.desc(), Property.price.asc())
         .limit(4)
         .all()
     )
 
     return {
-        "properties": [property.to_dict() for property in properties],
+        "properties": [property.to_dict(include_appointments=False) for property in properties],
     }
 
 @property_routes.route("/<int:property_id>")

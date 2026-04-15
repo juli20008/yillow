@@ -1,17 +1,19 @@
 import React, { useState, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { login } from "../../store/session";
+import { useNotification } from "../../context/Notification";
 
 import AgentBar from "./Agent";
 import UserBar from "./User";
 
-import logo from "../../assets/logo-blue.svg";
 import { Modal } from "../../context/Modal";
 import Login from "./Login";
 
 const NavBar = () => {
 	const dispatch = useDispatch();
+	const history = useHistory();
+	const { setToggleNotification, setNotificationMsg } = useNotification();
 	const user = useSelector((state) => state.session.user);
 	const [showLogin, setShowLogin] = useState(false);
 	const [showMenu, setShowMenu] = useState(false);
@@ -38,14 +40,36 @@ const NavBar = () => {
 		e.preventDefault();
 		const email = "demo@aa.io";
 		const password = "password";
-		await dispatch(login(email, password));
+		const data = await dispatch(login(email, password));
+		if (!data) {
+			setShowMenu(false);
+			history.push("/");
+		} else {
+			setToggleNotification("");
+			setNotificationMsg(data[0] || "Demo login failed");
+			setTimeout(() => {
+				setToggleNotification("notification-move");
+				setNotificationMsg("");
+			}, 2000);
+		}
 	};
 
 	const onAgentLogin = async (e) => {
 		e.preventDefault();
 		const email = "agent1@user.com";
 		const password = "password";
-		await dispatch(login(email, password));
+		const data = await dispatch(login(email, password));
+		if (!data) {
+			setShowMenu(false);
+			history.push("/appointments");
+		} else {
+			setToggleNotification("");
+			setNotificationMsg(data[0] || "Agent demo login failed");
+			setTimeout(() => {
+				setToggleNotification("notification-move");
+				setNotificationMsg("");
+			}, 2000);
+		}
 	};
 
 	const onClose = () => {
@@ -60,15 +84,12 @@ const NavBar = () => {
 		return (
 			<nav className="nav">
 				<div className="nav-lf">
-					<NavLink to="/about" className="btn-font-lt">
-						About
-					</NavLink>
 					<NavLink to="/agents" className="btn-font-lt">
 						Agent Finder
 					</NavLink>
 				</div>
 				<NavLink to="/" exact={true}>
-					<img src={logo} alt="Yillow" />
+					<img src="/Yollow.png" alt="Yollow" />
 				</NavLink>
 				<div className="nav-rt">
 					<button className="btn-font-lt" onClick={() => setShowLogin(true)}>

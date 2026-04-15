@@ -7,9 +7,11 @@ import Upcoming from "./Upcoming";
 import Past from "./Past";
 
 import Basic from "./Calendar";
+import Availability from "./Availability";
 
 const User = () => {
 	const appointments = useSelector((state) => state.appointments);
+	const user = useSelector((state) => state.session.user);
 	const [showUpcoming, setShowUpcoming] = useState(true);
 	const [newAppt, setNewAppt] = useState([]);
 	const [pastAppt, setPastAppt] = useState([]);
@@ -38,6 +40,7 @@ const User = () => {
 		<div className="appointment-ctrl">
 			<Basic />
 			<div>
+				{user?.agent && <Availability />}
 				<div className="appt-wrap">
 					<div
 						className="app-btn"

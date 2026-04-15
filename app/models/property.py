@@ -31,8 +31,8 @@ class Property(db.Model):
     images = db.relationship("PropertyImg", back_populates="property")
     appointments = db.relationship("Appointment", back_populates="property")
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_appointments=True):
+        data = {
             "id": self.id,
             "status": self.status,
             "street": self.street,
@@ -54,7 +54,12 @@ class Property(db.Model):
             "office": self.listing_agent.office,
             "front_img": self.front_img,
             "images": [image.id for image in self.images],
-            "appointments": [appointment.appt() for appointment in self.appointments],
+            "image_urls": [image.img_url for image in self.images],
             "lat": self.lat,
             "lng": self.long,
         }
+
+        if include_appointments:
+            data["appointments"] = [appointment.appt() for appointment in self.appointments]
+
+        return data

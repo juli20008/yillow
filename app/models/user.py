@@ -1,5 +1,6 @@
 from .db import db
 
+from sqlalchemy.exc import OperationalError
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
@@ -21,6 +22,7 @@ class User(db.Model, UserMixin):
 
     properties = db.relationship("Property", back_populates="listing_agent")
     areas = db.relationship("AgentArea", back_populates="agent")
+    availabilities = db.relationship("AgentAvailability", back_populates="agent", cascade="all, delete-orphan")
 
     user_reviews = db.relationship("Review", back_populates="user", primaryjoin="User.id == Review.user_id")
     agent_reviews = db.relationship("Review", back_populates="agent", primaryjoin="User.id == Review.agent_id")
@@ -80,6 +82,11 @@ class User(db.Model, UserMixin):
 
             areas = [area.city() for area in self.areas]
 
+            try:
+                availability = [availability.to_dict() for availability in self.availabilities]
+            except OperationalError:
+                availability = []
+
             return {
                 'id': self.id,
                 'username': self.username,
@@ -95,6 +102,7 @@ class User(db.Model, UserMixin):
                 "reviewIds" : [review.id for review in self.agent_reviews],
                 "rating": round(avg, 1),
                 "areas": areas,
+                "availability": availability,
             }
         else:
             return {

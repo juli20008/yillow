@@ -203,7 +203,7 @@ const AgentProfile = () => {
 							className="agent-input"
 							type="number"
 							maxLength="5"
-							placeholder="5 digit zip code only"
+							placeholder="5 digit postal code only"
 							value={zip}
 							onChange={(e) => setZip(e.target.value)}
 						/>

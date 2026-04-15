@@ -175,7 +175,7 @@ const MyMap = withScriptjs(
 										<div className="gm-div">
 											<img
 												className="gm-img"
-												src={marker.front_img}
+												src={marker.image_urls?.[0] || marker.front_img}
 												alt="House"
 											/>
 											<div className="gm-desc">
@@ -193,7 +193,7 @@ const MyMap = withScriptjs(
 										<div className="gm-div">
 											<img
 												className="gm-img"
-												src={marker.front_img}
+												src={marker.image_urls?.[0] || marker.front_img}
 												alt="House"
 											/>
 											<div className="gm-desc">

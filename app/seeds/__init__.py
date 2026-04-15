@@ -5,6 +5,7 @@ from .properties import seed_properties, undo_properties
 from .property_imgs import seed_property_imgs, undo_property_imgs
 from .reviews import seed_reviews, undo_reviews
 from .appointments import seed_appointments, undo_appointments
+from .agent_availability import seed_agent_availability, undo_agent_availability
 from .agent_area import seed_aa, undo_aa
 from .zip_city import seed_zip_city, undo_zip_city
 from .channel import seed_channel, undo_channel
@@ -24,6 +25,7 @@ def seed():
     seed_property_imgs()
     seed_reviews()
     seed_appointments()
+    seed_agent_availability()
     seed_aa()
     seed_zip_city()
     seed_channel()
@@ -38,6 +40,7 @@ def undo():
     undo_channel()
     undo_zip_city()
     undo_aa()
+    undo_agent_availability()
     undo_property_imgs()
     undo_properties()
     undo_reviews()

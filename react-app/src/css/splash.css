@@ -19,6 +19,22 @@
 	background-position: center;
 	gap: 18px;
 	box-sizing: border-box;
+	position: relative;
+	overflow: visible;
+	z-index: 2;
+}
+
+.splash-search-wrap::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.32);
+	z-index: 0;
+}
+
+.splash-search-wrap > * {
+	position: relative;
+	z-index: 1;
 }
 
 .splash-search-title {
@@ -79,6 +95,8 @@
 
 .splash-newly-listed {
 	padding: 28px 48px 56px;
+	position: relative;
+	z-index: 1;
 }
 
 .splash-newly-listed-head {

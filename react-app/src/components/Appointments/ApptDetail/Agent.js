@@ -23,6 +23,10 @@ const ApptDetail = ({ appt, past, onClose }) => {
 
 	const [hourList, setHourList] = useState([]);
 	const [errors, setErrors] = useState([]);
+	const [availableAgents, setAvailableAgents] = useState([]);
+	const [selectedAgentId, setSelectedAgentId] = useState("");
+	const [reassigning, setReassigning] = useState(false);
+	const [assignErrors, setAssignErrors] = useState([]);
 	const [showProperty, setShowProperty] = useState(false);
 
 	const { setToggleNotification, setNotificationMsg } = useNotification();
@@ -95,14 +99,65 @@ const ApptDetail = ({ appt, past, onClose }) => {
 		history.push(`/chats/${data.id}`);
 	};
 
+	const loadAvailableAgents = async () => {
+		try {
+			const response = await fetch(
+				`/api/appointments/available-agents?date=${appt.date}&time=${appt.time}&property_id=${appt.property_id}`
+			);
+			const data = await response.json();
+			if (response.ok) {
+				const others = (data.agents || []).filter(
+					(agent) => agent.id !== appt.agent_id
+				);
+				setAvailableAgents(others);
+				setSelectedAgentId(others[0]?.id ? String(others[0].id) : "");
+			} else {
+				setAvailableAgents([]);
+				setAssignErrors(data.errors || ["Unable to load available agents"]);
+			}
+		} catch (error) {
+			setAvailableAgents([]);
+			setAssignErrors(["Unable to load available agents"]);
+		}
+	};
+
+	const reassignAgent = async () => {
+		if (!selectedAgentId) {
+			setAssignErrors(["Select an agent first"]);
+			return;
+		}
+
+		setReassigning(true);
+		setAssignErrors([]);
+		const data = await dispatch(
+			appointmentActions.assignAppointmentAgent(
+				appt.id,
+				Number(selectedAgentId)
+			)
+		);
+		if (!data.errors) {
+			onClose();
+		} else {
+			setAssignErrors(data.errors);
+		}
+		setReassigning(false);
+	};
+
 	useEffect(() => {
 		setToday(appt.date);
 		setHour(appt.time);
+		setAssignErrors([]);
 	}, [appt]);
 
 	useEffect(() => {
 		setHourList(schedule[today]);
 	}, [schedule, today]);
+
+	useEffect(() => {
+		if (appt?.id) {
+			loadAvailableAgents();
+		}
+	}, [appt?.id, appt?.date, appt?.time, appt?.property_id]);
 
 	return (
 		<div className="appt-detail-modal">
@@ -209,6 +264,43 @@ const ApptDetail = ({ appt, past, onClose }) => {
 							Chat with client <i className="fa-regular fa-comment"></i>
 						</button>
 					</div>
+				</div>
+
+				<div className="appt-reassign-panel">
+					<div className="appt-label">Assign to another agent</div>
+					<div className="appt-reassign-row">
+						<select
+							className="appt-input"
+							value={selectedAgentId}
+							onChange={(e) => setSelectedAgentId(e.target.value)}
+							disabled={availableAgents.length === 0}
+						>
+							{availableAgents.length === 0 ? (
+								<option value="">No other agents available</option>
+							) : (
+								availableAgents.map((agent) => (
+									<option value={agent.id} key={agent.id}>
+										{agent.username} - {agent.office}
+									</option>
+								))
+							)}
+						</select>
+						<button
+							type="button"
+							className="btn btn-bl"
+							onClick={reassignAgent}
+							disabled={availableAgents.length === 0 || reassigning}
+						>
+							{reassigning ? "Assigning..." : "Assign"}
+						</button>
+					</div>
+					{assignErrors.length > 0 && (
+						<div className="error-list error-ctr">
+							{assignErrors.map((err) => (
+								<div key={err}>{err}</div>
+							))}
+						</div>
+					)}
 				</div>
 
 				{errors && (

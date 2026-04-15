@@ -23,34 +23,43 @@ const LoggedIn = ({
 	const dispatch = useDispatch();
 	const [errors, setErrors] = useState([]);
 	const [countMsg, setCountMsg] = useState(0);
+	const [submitting, setSubmitting] = useState(false);
 
 	const { setToggleNotification, setNotificationMsg } = useNotification();
 
 	const handleSubmit = async () => {
-		const appointment = {
-			property_id: property.id,
-			date: today,
-			time: hour,
-			message,
-		};
-		const data = await dispatch(appointmentActions.addAppointment(appointment));
+		setSubmitting(true);
+		setErrors([]);
+		try {
+			const appointment = {
+				property_id: property.id,
+				date: today,
+				time: hour,
+				message,
+			};
+			const data = await dispatch(appointmentActions.addAppointment(appointment));
 
-		if (!data.errors) {
-			// dispatch to update property info
-			await dispatch(propertyActions.getThisProperty(property.id));
-			// notify appointment booked
-			setNotificationMsg(
-				"Appointment booked. You can access it from Appointments"
-			);
-			setToggleNotification("");
-			setTimeout(() => {
-				setToggleNotification("notification-move");
-				setNotificationMsg("");
-			}, 2000);
+			if (!data.errors) {
+				// dispatch to update property info
+				await dispatch(propertyActions.getThisProperty(property.id));
+				// notify appointment booked
+				setNotificationMsg(
+					"Appointment booked. You can access it from Appointments"
+				);
+				setToggleNotification("");
+				setTimeout(() => {
+					setToggleNotification("notification-move");
+					setNotificationMsg("");
+				}, 2000);
 
-			setShowTour(false);
-		} else {
-			setErrors(data.errors);
+				setShowTour(false);
+			} else {
+				setErrors(data.errors);
+			}
+		} catch {
+			setErrors(["Unable to request visit right now. Please try again."]);
+		} finally {
+			setSubmitting(false);
 		}
 	};
 
@@ -111,8 +120,8 @@ const LoggedIn = ({
 					))}
 				</div>
 			)}
-			<button type="button" className="btn" onClick={handleSubmit}>
-				Request visit
+			<button type="button" className="btn" onClick={handleSubmit} disabled={submitting}>
+				{submitting ? "Requesting..." : "Request visit"}
 			</button>
 		</>
 	);

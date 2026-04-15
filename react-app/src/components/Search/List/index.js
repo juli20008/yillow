@@ -47,7 +47,7 @@ const List = ({
 			const searchTerm = search.split(" ").join("-");
 			history.push(`/search/${searchTerm}`);
 		} else {
-			setError("Please enter address, city, or zip code to search");
+			setError("Please enter address, city, or postal code to search");
 		}
 	};
 
@@ -94,7 +94,7 @@ const List = ({
 						<input
 							type="text"
 							className="search-input"
-							placeholder="Enter an address, city, or ZIP code"
+							placeholder="Enter an address, city, or Postal Code"
 							value={search}
 							onChange={(e) => setSearch(e.target.value)}
 							ref={searchDivRef}

@@ -12,6 +12,7 @@ const ApptCard = ({ appt, past }) => {
 
 	const property = properties[appt?.property_id];
 	const agent = agents[appt?.agent_id];
+	const image = property?.image_urls?.[0] || property?.front_img;
 
 	const [showModal, setShowModal] = useState(false);
 
@@ -22,11 +23,11 @@ const ApptCard = ({ appt, past }) => {
 	};
 
 	return (
-		<div className="appt-card" onClick={() => setShowModal(true)}>
-			{property && (
+			<div className="appt-card" onClick={() => setShowModal(true)}>
+			{property && image && (
 				<div
 					className="appt-house"
-					style={{ backgroundImage: `url('${property.front_img}')` }}
+					style={{ backgroundImage: `url('${image}')` }}
 				></div>
 			)}
 			<div className="appt-detail-wrap">

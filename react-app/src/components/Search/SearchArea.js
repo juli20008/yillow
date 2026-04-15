@@ -36,6 +36,16 @@ const SearchArea = () => {
 	}, [dispatch, areaParam]);
 
 	useEffect(() => {
+		document.documentElement.classList.add("search-page-lock");
+		document.body.classList.add("search-page-lock");
+
+		return () => {
+			document.documentElement.classList.remove("search-page-lock");
+			document.body.classList.remove("search-page-lock");
+		};
+	}, []);
+
+	useEffect(() => {
 		let arr = Object.values(properties)
 			.filter((prop) => prop?.price > min)
 			.filter((prop) => prop?.price < max)

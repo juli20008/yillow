@@ -25,6 +25,15 @@ const deleteAppointment = (appointmentId) => {
 	};
 };
 
+const parseErrorResponse = async (response) => {
+	const text = await response.text();
+	try {
+		return JSON.parse(text);
+	} catch {
+		return { errors: [text || "Something went wrong. Please try again"] };
+	}
+};
+
 // Thunks
 export const getAllAppointments = () => async (dispatch) => {
 	const response = await fetch("/api/appointments/");
@@ -38,61 +47,97 @@ export const getAllAppointments = () => async (dispatch) => {
 };
 
 export const addAppointment = (appointment) => async (dispatch) => {
-	const response = await fetch("/api/appointments/", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(appointment),
-	});
-	const data = await response.json();
-	if (response.ok) {
-		if (data.errors) {
-			return data;
+	try {
+		const response = await fetch("/api/appointments/", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(appointment),
+		});
+		const data = response.ok
+			? await response.json()
+			: await parseErrorResponse(response);
+		if (response.ok) {
+			if (data.errors) {
+				return data;
+			}
+			dispatch(addEditAppointment(data.appointment));
+			return data.appointment;
 		}
-		dispatch(addEditAppointment(data.appointment));
-		return data.appointment;
-	} else if (response.status < 500) {
 		return data;
-	} else {
-		return { errors: ["Something went wrong. Please try again"] };
+	} catch {
+		return { errors: ["Unable to request visit right now. Please try again."] };
 	}
 };
 
 export const editAppointment = (appointment) => async (dispatch) => {
-	const response = await fetch(`/api/appointments/${appointment.id}`, {
-		method: "PUT",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(appointment),
-	});
-	const data = await response.json();
-	if (response.ok) {
-		if (data.errors) {
+	try {
+		const response = await fetch(`/api/appointments/${appointment.id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(appointment),
+		});
+		const data = response.ok
+			? await response.json()
+			: await parseErrorResponse(response);
+		if (response.ok) {
+			if (data.errors) {
+				return data;
+			}
+			dispatch(addEditAppointment(data.appointment));
 			return data;
 		}
-		dispatch(addEditAppointment(data.appointment));
 		return data;
-	} else if (response.status < 500) {
-		return data;
-	} else {
+	} catch {
 		return { errors: ["Something went wrong. Please try again"] };
 	}
 };
 
 export const deleteThisAppointment = (appointmentId) => async (dispatch) => {
-	const response = await fetch(`/api/appointments/${appointmentId}`, {
-		method: "DELETE",
-	});
-	if (response.ok) {
-		const data = await response.json();
-		if (data.errors) {
+	try {
+		const response = await fetch(`/api/appointments/${appointmentId}`, {
+			method: "DELETE",
+		});
+		if (response.ok) {
+			const data = await response.json();
+			if (data.errors) {
+				return data;
+			}
+			dispatch(deleteAppointment(appointmentId));
 			return data;
 		}
-		dispatch(deleteAppointment(appointmentId));
+		return await parseErrorResponse(response);
+	} catch {
+		return { errors: ["Something went wrong. Please try again"] };
+	}
+};
+
+export const assignAppointmentAgent = (appointmentId, agentId) => async (
+	dispatch
+) => {
+	try {
+		const response = await fetch(`/api/appointments/${appointmentId}/assign`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ agent_id: agentId }),
+		});
+		const data = response.ok
+			? await response.json()
+			: await parseErrorResponse(response);
+		if (response.ok) {
+			if (data.errors) {
+				return data;
+			}
+			dispatch(addEditAppointment(data.appointment));
+			return data;
+		}
 		return data;
-	} else {
+	} catch {
 		return { errors: ["Something went wrong. Please try again"] };
 	}
 };

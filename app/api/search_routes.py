@@ -1,4 +1,5 @@
 from sqlalchemy import or_, and_
+from sqlalchemy.orm import selectinload
 from flask import Blueprint, jsonify, request
 from app.models import Property, State
 
@@ -12,7 +13,16 @@ def search_by_area():
     swLat = float(request.json["swLat"]) # Min lat
     swLng = float(request.json["swLng"]) # Min lng
 
-    properties = Property.query.filter(Property.lat < neLat, Property.long < neLng, Property.lat > swLat, Property.long > swLng).limit(500).all()
+    properties = (
+        Property.query.options(
+            selectinload(Property.state),
+            selectinload(Property.listing_agent),
+            selectinload(Property.images),
+        )
+        .filter(Property.lat < neLat, Property.long < neLng, Property.lat > swLat, Property.long > swLng)
+        .limit(500)
+        .all()
+    )
 
     return {
         "properties": [property.to_dict() for property in properties],
@@ -24,7 +34,16 @@ def search_by_term(term):
     parsedTerm = " ".join(term.split("-"))
 
     # exact matche
-    street = Property.query.filter(Property.street.ilike(f"{parsedTerm}")).limit(500).all()
+    street = (
+        Property.query.options(
+            selectinload(Property.state),
+            selectinload(Property.listing_agent),
+            selectinload(Property.images),
+        )
+        .filter(Property.street.ilike(f"{parsedTerm}"))
+        .limit(500)
+        .all()
+    )
 
     if street:
         return {"properties": [prop.to_dict() for prop in street]}
@@ -32,7 +51,16 @@ def search_by_term(term):
     results = []
 
     # search by street
-    streets = Property.query.filter(Property.street.ilike(f"%{parsedTerm}%")).limit(500).all()
+    streets = (
+        Property.query.options(
+            selectinload(Property.state),
+            selectinload(Property.listing_agent),
+            selectinload(Property.images),
+        )
+        .filter(Property.street.ilike(f"%{parsedTerm}%"))
+        .limit(500)
+        .all()
+    )
 
     if streets:
         results.extend([street.to_dict() for street in streets])
@@ -42,7 +70,16 @@ def search_by_term(term):
 
 
     # search by city
-    properties = Property.query.filter(Property.city.ilike(f"%{parsedTerm}%")).limit(500).all()
+    properties = (
+        Property.query.options(
+            selectinload(Property.state),
+            selectinload(Property.listing_agent),
+            selectinload(Property.images),
+        )
+        .filter(Property.city.ilike(f"%{parsedTerm}%"))
+        .limit(500)
+        .all()
+    )
 
     if properties:
         results.extend([street.to_dict() for street in properties])
@@ -52,7 +89,16 @@ def search_by_term(term):
 
 
     # search by zip
-    zips = Property.query.filter(Property.zip.ilike(f"%{parsedTerm}%")).limit(500).all()
+    zips = (
+        Property.query.options(
+            selectinload(Property.state),
+            selectinload(Property.listing_agent),
+            selectinload(Property.images),
+        )
+        .filter(Property.zip.ilike(f"%{parsedTerm}%"))
+        .limit(500)
+        .all()
+    )
 
     if zips:
         results.extend([property.to_dict() for property in zips])
