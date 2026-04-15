@@ -3,6 +3,8 @@
 	flex-direction: column;
 	align-items: center;
 	gap: 50px;
+	flex-shrink: 0;
+	width: 100%;
 }
 
 .footer-tech {
@@ -28,4 +30,9 @@
 
 .footer-logo {
 	width: 150px;
+}
+
+.footer-ctrl img:last-child {
+	max-width: 100%;
+	height: auto;
 }
