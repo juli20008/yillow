@@ -1,36 +1,32 @@
-# Start with the python:3.9 image
-FROM python:3.9
-# Set the following enviroment variables
-#
-# REACT_APP_BASE_URL -> Your deployment URL
-ENV REACT_APP_BASE_URL=https://yillow-app.herokuapp.com
+FROM node:18-bullseye AS frontend
 
-# FLASK_APP -> entry point to your flask app
+WORKDIR /frontend
+
+COPY react-app/package*.json ./
+RUN npm ci
+
+COPY react-app/ ./
+ENV NODE_OPTIONS=--openssl-legacy-provider
+RUN npm run build
+
+FROM python:3.9 AS backend
+
 ENV FLASK_APP=app
-
-# FLASK_ENV -> Tell flask to use the production server
 ENV FLASK_ENV=production
-
-# SQLALCHEMY_ECHO -> Just set it to true
+ENV PYTHONUNBUFFERED=1
 ENV SQLALCHEMY_ECHO=True
 
-# Set the directory for upcoming commands to /var/www
 WORKDIR /var/www
 
-# Copy all the files from your repo to the working directory
-COPY . .
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the built react app (it's built for us) from the
-# /react-app/build/ directory into your flasks app/static directory
-COPY /react-app/build/* app/static/
+COPY app ./app
+COPY migrations ./migrations
+COPY init_db.py reset_db.py update_images.py ./
 
-# Run the next two python install commands with PIP
-RUN pip install -r requirements.txt
+RUN flask db upgrade && flask seed all
 
-# install -r requirements.txt
-# install psycopg2
-RUN pip install psycopg2
+COPY --from=frontend /frontend/build ./app/static
 
-# Start the flask environment by setting our
-# closing command to gunicorn app:app
-CMD gunicorn --worker-class eventlet -w 1 app:app
+CMD ["sh", "-c", "gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:${PORT:-10000} app:app"]

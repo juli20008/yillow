@@ -1,12 +1,11 @@
-from flask_socketio import SocketIO, emit, join_room, leave_room
-from flask_login import current_user
-from app.models import db, Chat
 import os
 
-if os.environ.get("FLASK_ENV") == "production":
-    origins = ["http://yillow-app.herokuapp.com", "https://yillow-app.herokuapp.com"]
-else:
-    origins = "*"
+from flask_socketio import SocketIO, emit, join_room, leave_room
+
+from app.models import db, Chat
+
+# Allow the demo host without hard-coding a specific deployment URL.
+origins = os.environ.get("SOCKETIO_CORS_ALLOWED_ORIGINS", "*")
 
 socketio = SocketIO(cors_allowed_origins=origins)
 

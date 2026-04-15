@@ -47,6 +47,20 @@ The React app will start at: **http://localhost:3000**
 
 ---
 
+## **Fast Demo Deploy**
+
+If you only want to show the app, the easiest path is to deploy the Docker image on Render:
+
+1. Push this repo to GitHub.
+2. In Render, create a new Blueprint from `render.yaml`.
+3. Set `SECRET_KEY` when Render prompts you.
+4. Deploy the `yillow-demo` service.
+
+This deploy path uses the app's SQLite fallback, so you do not need to set up Postgres first.
+The Docker image also runs `flask db upgrade` and `flask seed all` during build, so the demo opens with sample data.
+
+---
+
 ## **Optional: Seed Database with Sample Data**
 
 To add sample data for testing:

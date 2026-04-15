@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: yillow-demo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: SECRET_KEY
+        sync: false
