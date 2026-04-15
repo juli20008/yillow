@@ -1,6 +1,16 @@
-"""Initialize the database with all tables and seed data"""
+"""Initialize the database with all tables and seed data."""
+
 from app import app, db
-from app.seeds import seed_users, seed_states, seed_properties, seed_property_imgs, seed_reviews, seed_appointments, seed_aa, seed_zip_city, seed_channel, seed_chat
+from app.seeds import (
+    seed_users,
+    seed_states,
+    seed_properties,
+    seed_property_imgs,
+    seed_reviews,
+    seed_appointments,
+    seed_aa,
+    seed_channel,
+)
 
 with app.app_context():
     print("Creating all database tables...")
@@ -14,9 +24,7 @@ with app.app_context():
     seed_reviews()
     seed_appointments()
     seed_aa()
-    seed_zip_city()
     seed_channel()
-    seed_chat()
     
     print("[OK] Database initialized successfully!")
     print(f"[OK] Database: {app.config['SQLALCHEMY_DATABASE_URI']}")

@@ -27,9 +27,8 @@ def seed():
     seed_appointments()
     seed_agent_availability()
     seed_aa()
-    seed_zip_city()
     seed_channel()
-    seed_chat()
+    # Keep build-time demo seeding on the stable datasets only.
     # Add other seed functions here
 
 

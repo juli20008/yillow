@@ -22,10 +22,9 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
-COPY migrations ./migrations
 COPY init_db.py reset_db.py update_images.py ./
 
-RUN flask db upgrade && flask seed all
+RUN rm -f yillow.db && python init_db.py
 
 COPY --from=frontend /frontend/build ./app/static
 
