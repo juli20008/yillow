@@ -41,8 +41,7 @@ const Footer = () => {
 				</a>
 			</div>
 			<NavLink to="/about" className="footer-logo-wrap">
-				<img className="footer-logo" src={logo} alt="Yillow" /> © 2022 Frances
-				(Huang) Lau
+				<img className="footer-logo" src={logo} alt="Yillow" />
 			</NavLink>
 
 			<img src={footer} alt="Footer" />

@@ -11,6 +11,18 @@ property_routes = Blueprint('properties', __name__)
 #         "properties": [property.to_dict() for property in properties],
 #         }
 
+@property_routes.route("/feed")
+def property_feed():
+    properties = (
+        Property.query.order_by(Property.listing_date.desc(), Property.price.asc())
+        .limit(4)
+        .all()
+    )
+
+    return {
+        "properties": [property.to_dict() for property in properties],
+    }
+
 @property_routes.route("/<int:property_id>")
 def get_property(property_id):
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 
 import Footer from "./Footer";
+import PropertyCard from "../Search/List/PropertyCard";
 
 const Splash = () => {
 	const history = useHistory();
@@ -13,6 +14,7 @@ const Splash = () => {
 	const [placeholder, setPlaceholder] = useState(
 		"Enter an address, city, or ZIP code"
 	);
+	const [newlyListed, setNewlyListed] = useState([]);
 
 	const searchDivRef = useRef();
 	const searchDDRef = useRef();
@@ -42,6 +44,13 @@ const Splash = () => {
 	}, []);
 
 	useEffect(() => {
+		fetch("/api/properties/feed")
+			.then((res) => res.json())
+			.then((res) => setNewlyListed(res.properties || []))
+			.catch((err) => console.log(err));
+	}, []);
+
+	useEffect(() => {
 		const filtered = searchList.filter((term) =>
 			term.toLowerCase().includes(search.toLowerCase())
 		);
@@ -52,7 +61,9 @@ const Splash = () => {
 		<>
 			<main className="splash-ctrl">
 				<form className="splash-search-wrap" onSubmit={handleSubmit}>
-					<div className="splash-search-title">Find it. Tour it. Own it.</div>
+					<div className="splash-search-title">
+						Find the right home faster and request a showing today.
+					</div>
 					<label className="search-label">
 						<input
 							type="text"
@@ -91,6 +102,21 @@ const Splash = () => {
 						</div>
 					</label>
 				</form>
+				<section className="splash-newly-listed">
+					<div className="splash-newly-listed-head">
+						<h2>Newly Listed</h2>
+						<div className="splash-newly-listed-link">See More</div>
+					</div>
+					<div className="splash-newly-listed-grid">
+						{newlyListed.map((property) => (
+							<PropertyCard
+								key={property.id}
+								property={property}
+								setOver={() => {}}
+							/>
+						))}
+					</div>
+				</section>
 			</main>
 			<Footer />
 		</>

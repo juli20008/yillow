@@ -11,7 +11,7 @@
 
 .appt-title {
 	font-size: 30px;
-	font-family: "Times New Roman", Times, serif;
+	font-family: "Open Sans", sans-serif;
 }
 
 .appt-wrap {
@@ -75,7 +75,7 @@
 .appt-time {
 	font-size: 24px;
 	font-weight: bold;
-	font-family: "Times New Roman", Times, serif;
+	font-family: "Open Sans", sans-serif;
 }
 
 .appt-address-wrap {

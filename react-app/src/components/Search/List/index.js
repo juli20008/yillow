@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 
 import PropertyCard from "./PropertyCard";
@@ -28,6 +28,8 @@ const List = ({
 	const [searchList, setSearchList] = useState([]);
 	const [searchFiltered, setSearchFiltered] = useState([]);
 	const [error, setError] = useState("");
+	const [pageSize, setPageSize] = useState(100);
+	const [currentPage, setCurrentPage] = useState(1);
 
 	const searchDivRef = useRef();
 	const searchDDRef = useRef();
@@ -72,6 +74,17 @@ const List = ({
 		);
 		setSearchFiltered(filtered);
 	}, [search, searchList]);
+
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [propArr, pageSize]);
+
+	const totalResults = propArr.length;
+	const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
+	const safePage = Math.min(currentPage, totalPages);
+	const startIndex = (safePage - 1) * pageSize;
+	const endIndex = startIndex + pageSize;
+	const pagedProperties = propArr.slice(startIndex, endIndex);
 
 	return (
 		<div className="search-wrap">
@@ -197,19 +210,61 @@ const List = ({
 							</select>
 						</label>
 					</div>
-					<div className="results">{propArr.length} results</div>
+					<div className="results">{totalResults} results</div>
 				</div>
 			</div>
 			{propArr.length ? (
-				<div className="search-list">
-					{propArr?.map((property, idx) => (
-						<PropertyCard
-							key={"property" + idx}
-							property={property}
-							setOver={setOver}
-						/>
-					))}
-				</div>
+				<>
+					<div className="search-list">
+						{pagedProperties?.map((property, idx) => (
+							<PropertyCard
+								key={property.id || "property" + idx}
+								property={property}
+								setOver={setOver}
+							/>
+						))}
+					</div>
+					<div className="search-pagination">
+						<div className="search-pagination-info">
+							Showing {startIndex + 1}-
+							{Math.min(endIndex, totalResults)} of {totalResults}
+						</div>
+						<div className="search-pagination-controls">
+							<label className="search-page-size">
+								<span>Per page</span>
+								<select
+									value={pageSize}
+									onChange={(e) => setPageSize(parseInt(e.target.value, 10))}
+								>
+									<option value="20">20</option>
+									<option value="50">50</option>
+									<option value="100">100</option>
+								</select>
+							</label>
+							<button
+								className="search-page-btn"
+								type="button"
+								disabled={safePage === 1}
+								onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+							>
+								Prev
+							</button>
+							<div className="search-page-count">
+								Page {safePage} of {totalPages}
+							</div>
+							<button
+								className="search-page-btn"
+								type="button"
+								disabled={safePage === totalPages}
+								onClick={() =>
+									setCurrentPage((page) => Math.min(totalPages, page + 1))
+								}
+							>
+								Next
+							</button>
+						</div>
+					</div>
+				</>
 			) : (
 				<div className="search-no-results">
 					<img className="img" src={noproperty} alt="No property" />

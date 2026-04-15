@@ -137,13 +137,12 @@ const Detail = ({ property, openTour }) => {
 						verified by broker or MLS. All information should be independently
 						reviewed and verified for accuracy. Properties may or may not be
 						listed by the office/agent presenting the information The listing
-						broker’s offer of compensation is made only to participants of the
+						brokerâ€™s offer of compensation is made only to participants of the
 						MLS where the listing is filed.
 					</div>
 					<div className="footer-ctrl">
 						<div className="footer-logo-wrap">
-							<img className="footer-logo" src={logo} alt="Yillow" /> © 2022
-							Frances (Huang) Lau
+							<img className="footer-logo" src={logo} alt="Yillow" />
 						</div>
 
 						<img src={footer} alt="Footer" />

@@ -1,8 +1,8 @@
 .splash-ctrl {
 	display: flex;
 	flex-direction: column;
-	height: calc(100vh - 83px);
-	overflow: hidden;
+	min-height: calc(100vh - 83px);
+	overflow-x: hidden;
 }
 
 .splash-search-wrap {
@@ -10,19 +10,22 @@
 	flex-direction: column;
 	align-items: center;
 	width: 100vw;
-	flex: 1 1 auto;
+	flex: 0 0 auto;
+	height: 320px;
+	min-height: 320px;
+	padding: 28px 0;
 	background-image: url(../assets/ZillowTimberlake_2098_DT_Full.webp);
 	background-size: cover;
 	background-position: center;
-	gap: 30px;
-	min-height: 0;
+	gap: 18px;
+	box-sizing: border-box;
 }
 
 .splash-search-title {
-	min-height: 125px;
+	min-height: 72px;
 	color: white;
-	font-family: "Times New Roman", Times, serif;
-	font-size: 40px;
+	font-family: "Open Sans", sans-serif;
+	font-size: 36px;
 	font-weight: 600;
 	display: flex;
 	align-items: flex-end;
@@ -72,4 +75,56 @@
 
 .search-input:focus ~ .search-dd {
 	visibility: visible;
+}
+
+.splash-newly-listed {
+	padding: 28px 48px 56px;
+}
+
+.splash-newly-listed-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+.splash-newly-listed-head h2 {
+	margin: 0;
+	font-size: 24px;
+	font-weight: 500;
+	color: #111;
+}
+
+.splash-newly-listed-link {
+	color: var(--blue);
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.splash-newly-listed-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 16px;
+}
+
+@media screen and (max-width: 1200px) {
+	.splash-newly-listed-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media screen and (max-width: 700px) {
+	.splash-newly-listed {
+		padding: 20px 20px 40px;
+	}
+
+	.splash-newly-listed-head {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.splash-newly-listed-grid {
+		grid-template-columns: 1fr;
+	}
 }
