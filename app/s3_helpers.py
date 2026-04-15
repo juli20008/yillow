@@ -1,17 +1,23 @@
-import boto3
-# import botocore
 import os
 import uuid
 
-BUCKET_NAME = os.environ.get("S3_BUCKET")
-S3_LOCATION = f"https://{BUCKET_NAME}.s3.amazonaws.com/"
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "gif"}
 
-s3 = boto3.client(
-   "s3",
-   aws_access_key_id=os.environ.get("S3_KEY"),
-   aws_secret_access_key=os.environ.get("S3_SECRET")
-)
+def get_s3_client():
+    bucket_name = os.environ.get("S3_BUCKET")
+    s3_key = os.environ.get("S3_KEY")
+    s3_secret = os.environ.get("S3_SECRET")
+
+    if not bucket_name or not s3_key or not s3_secret:
+        return None, None
+
+    import boto3
+
+    return boto3.client(
+        "s3",
+        aws_access_key_id=s3_key,
+        aws_secret_access_key=s3_secret
+    ), bucket_name
 
 
 def allowed_file(filename):
@@ -26,10 +32,14 @@ def get_unique_filename(filename):
 
 
 def upload_file_to_s3(file, acl="public-read"):
+    s3, bucket_name = get_s3_client()
+    if not s3 or not bucket_name:
+        return {"errors": "S3 is not configured"}
+
     try:
         s3.upload_fileobj(
             file,
-            BUCKET_NAME,
+            bucket_name,
             file.filename,
             ExtraArgs={
                 "ACL": acl,
@@ -40,4 +50,4 @@ def upload_file_to_s3(file, acl="public-read"):
         # in case the our s3 upload fails
         return {"errors": str(e)}
 
-    return {"url": f"{S3_LOCATION}{file.filename}"}
+    return {"url": f"https://{bucket_name}.s3.amazonaws.com/{file.filename}"}
