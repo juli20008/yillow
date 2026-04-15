@@ -3,7 +3,7 @@ FROM node:18-bullseye AS frontend
 WORKDIR /frontend
 
 COPY react-app/package*.json ./
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 COPY react-app/ ./
 ENV NODE_OPTIONS=--openssl-legacy-provider
