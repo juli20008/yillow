@@ -1,4 +1,4 @@
-FROM node:18-bullseye AS frontend
+FROM node:16-bullseye AS frontend
 
 WORKDIR /frontend
 
@@ -6,7 +6,6 @@ COPY react-app/package*.json ./
 RUN npm install --legacy-peer-deps
 
 COPY react-app/ ./
-ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN npm run build
 
 FROM python:3.9 AS backend
