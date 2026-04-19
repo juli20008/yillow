@@ -1,13 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useHistory } from "react-router-dom";
 
+import MyMap from "../Search/Map";
 import Footer from "./Footer";
-import PropertyCard from "../Search/List/PropertyCard";
 
 const Splash = () => {
 	const history = useHistory();
 	const defaultGtaArea =
 		"/area/neLat=44.20&neLng=-78.90&swLat=43.30&swLng=-80.80&zoom=10";
+	const gtaCenter = { lat: 43.6532, lng: -79.3832 };
 
 	const [search, setSearch] = useState("");
 	const [searchList, setSearchList] = useState([]);
@@ -17,6 +18,7 @@ const Splash = () => {
 		"Enter an address, city, or Postal Code"
 	);
 	const [newlyListed, setNewlyListed] = useState([]);
+	const [mapCenter] = useState(gtaCenter);
 
 	const searchDivRef = useRef();
 	const searchDDRef = useRef();
@@ -59,6 +61,11 @@ const Splash = () => {
 		);
 		setSearchFiltered(filtered);
 	}, [search, searchList]);
+
+	const googleMapURL = useMemo(() => {
+		const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+		return `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.exp&libraries=geometry,drawing,places`;
+	}, []);
 
 	return (
 		<>
@@ -104,25 +111,28 @@ const Splash = () => {
 							))}
 						</div>
 					</label>
+					<button
+						type="button"
+						className="splash-map-search-btn"
+						onClick={() => history.push(defaultGtaArea)}
+					>
+						Search by Map
+					</button>
 				</form>
-				<section className="splash-newly-listed">
-					<div className="splash-newly-listed-head">
-						<h2>Newly Listed</h2>
-						<div
-							className="splash-newly-listed-link"
-							onClick={() => history.push("/search/Toronto")}
-						>
-							See More
-						</div>
-					</div>
-					<div className="splash-newly-listed-grid">
-						{newlyListed.map((property) => (
-							<PropertyCard
-								key={property.id}
-								property={property}
-								setOver={() => {}}
-							/>
-						))}
+				<section className="splash-map-section">
+					<div className="splash-map-shell">
+						<MyMap
+							isMarkerShown
+							googleMapURL={googleMapURL}
+							loadingElement={<div style={{ height: `100%` }} />}
+							containerElement={<div className="map-ctnr splash-map-ctnr" />}
+							mapElement={<div style={{ height: `100%` }} />}
+							markers={newlyListed}
+							center={mapCenter}
+							zoom={10}
+							over={{ id: 0 }}
+							enableAreaSearch={false}
+						/>
 					</div>
 				</section>
 			</main>

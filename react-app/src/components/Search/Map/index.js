@@ -112,10 +112,10 @@ const MyMap = withScriptjs(
 
 		// Fit bounds on mount, and when the markers change
 		useEffect(() => {
-			if (!areaParam && props.markers) {
+			if (!areaParam && props.markers && props.fitBounds !== false) {
 				fitBounds();
 			}
-		}, [props.markers, areaParam]);
+		}, [props.markers, areaParam, props.fitBounds]);
 
 		// Fit bounds on mount, and when the markers change
 		useEffect(() => {
@@ -131,6 +131,8 @@ const MyMap = withScriptjs(
 			setIsOver({ id: props.over.id });
 		}, [props.over]);
 
+		const enableAreaSearch = props.enableAreaSearch !== false;
+
 		return (
 			<>
 				<GoogleMap
@@ -144,11 +146,15 @@ const MyMap = withScriptjs(
 						fullscreenControl: false,
 						streetViewControl: false,
 					}}
-					onIdle={(e) => {
-						setArea();
+					onIdle={() => {
+						if (enableAreaSearch) {
+							setArea();
+						}
 					}}
-					onDragEnd={(e) => {
-						searchArea();
+					onDragEnd={() => {
+						if (enableAreaSearch) {
+							searchArea();
+						}
 					}}
 				>
 					<div></div>
