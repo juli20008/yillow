@@ -2,12 +2,19 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useHistory } from "react-router-dom";
 
 import MyMap from "../Search/Map";
+import List from "../Search/List";
 import Footer from "./Footer";
 
 const Splash = () => {
 	const history = useHistory();
 	const defaultGtaArea =
 		"/area/neLat=44.20&neLng=-78.90&swLat=43.30&swLng=-80.80&zoom=10";
+	const gtaAreaPayload = {
+		neLat: 44.2,
+		neLng: -78.9,
+		swLat: 43.3,
+		swLng: -80.8,
+	};
 	const gtaCenter = { lat: 43.6532, lng: -79.3832 };
 
 	const [search, setSearch] = useState("");
@@ -18,7 +25,8 @@ const Splash = () => {
 		"Enter an address, city, or Postal Code"
 	);
 	const [newlyListed, setNewlyListed] = useState([]);
-	const [mapCenter] = useState(gtaCenter);
+	const [mapCenter, setMapCenter] = useState(gtaCenter);
+	const [over, setOver] = useState({ id: 0 });
 
 	const searchDivRef = useRef();
 	const searchDDRef = useRef();
@@ -49,7 +57,13 @@ const Splash = () => {
 	}, []);
 
 	useEffect(() => {
-		fetch("/api/properties/feed")
+		fetch("/api/search/areas", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(gtaAreaPayload),
+		})
 			.then((res) => res.json())
 			.then((res) => setNewlyListed(res.properties || []))
 			.catch((err) => console.log(err));
@@ -61,6 +75,18 @@ const Splash = () => {
 		);
 		setSearchFiltered(filtered);
 	}, [search, searchList]);
+
+	useEffect(() => {
+		if (newlyListed.length) {
+			const latArr = newlyListed.map((prop) => prop.lat);
+			const lngArr = newlyListed.map((prop) => prop.lng);
+			const centerLat = latArr.reduce((acc, el) => acc + el) / latArr.length;
+			const centerLng = lngArr.reduce((acc, el) => acc + el) / lngArr.length;
+			setMapCenter({ lat: centerLat, lng: centerLng });
+		} else {
+			setMapCenter(gtaCenter);
+		}
+	}, [newlyListed]);
 
 	const googleMapURL = useMemo(() => {
 		const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -111,27 +137,37 @@ const Splash = () => {
 							))}
 						</div>
 					</label>
-					<button
-						type="button"
-						className="splash-map-search-btn"
-						onClick={() => history.push(defaultGtaArea)}
-					>
-						Search by Map
-					</button>
 				</form>
 				<section className="splash-map-section">
-					<div className="splash-map-shell">
+					<div className="search-pg-ctrl splash-map-grid">
 						<MyMap
 							isMarkerShown
 							googleMapURL={googleMapURL}
 							loadingElement={<div style={{ height: `100%` }} />}
-							containerElement={<div className="map-ctnr splash-map-ctnr" />}
+							containerElement={<div className="map-ctnr" />}
 							mapElement={<div style={{ height: `100%` }} />}
 							markers={newlyListed}
 							center={mapCenter}
 							zoom={10}
-							over={{ id: 0 }}
+							over={over}
 							enableAreaSearch={false}
+						/>
+						<List
+							min={0}
+							setMin={() => {}}
+							max={99999999999}
+							setMax={() => {}}
+							type=""
+							setType={() => {}}
+							bed={0}
+							setBed={() => {}}
+							bath={0}
+							setBath={() => {}}
+							propArr={newlyListed}
+							setOver={setOver}
+							url={defaultGtaArea}
+							showMapAreaButton={false}
+							compactMode
 						/>
 					</div>
 				</section>

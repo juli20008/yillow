@@ -131,6 +131,12 @@ const MyMap = withScriptjs(
 			setIsOver({ id: props.over.id });
 		}, [props.over]);
 
+		useEffect(() => {
+			if (mapRef.current && props.center) {
+				mapRef.current.panTo(props.center);
+			}
+		}, [props.center]);
+
 		const enableAreaSearch = props.enableAreaSearch !== false;
 
 		return (

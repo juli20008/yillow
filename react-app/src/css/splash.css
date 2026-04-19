@@ -11,9 +11,9 @@
 	align-items: center;
 	width: 100vw;
 	flex: 0 0 auto;
-	height: 320px;
-	min-height: 320px;
-	padding: 28px 0;
+	height: auto;
+	min-height: 390px;
+	padding: 28px 0 30px;
 	background-image: url(../assets/ZillowTimberlake_2098_DT_Full.webp);
 	background-size: cover;
 	background-position: center;
@@ -93,28 +93,6 @@
 	visibility: visible;
 }
 
-.splash-map-search-btn {
-	border: 0;
-	border-radius: 999px;
-	padding: 14px 26px;
-	background: #ffffff;
-	color: #111827;
-	font-size: 14px;
-	font-weight: 700;
-	cursor: pointer;
-	box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
-	transition: transform 0.18s ease, box-shadow 0.18s ease,
-		background 0.18s ease, color 0.18s ease;
-	margin-top: 12px;
-}
-
-.splash-map-search-btn:hover {
-	transform: translateY(-1px);
-	background: #111827;
-	color: #ffffff;
-	box-shadow: 0 16px 32px rgba(15, 23, 42, 0.24);
-}
-
 .splash-newly-listed {
 	padding: 28px 48px 56px;
 	position: relative;
@@ -149,22 +127,28 @@
 }
 
 .splash-map-section {
-	padding: 28px 48px 56px;
-	background: linear-gradient(180deg, rgba(244, 246, 250, 0.8), #ffffff);
-	border-top: 1px solid rgba(17, 17, 17, 0.08);
-}
-
-.splash-map-shell {
-	border-radius: 28px;
-	overflow: hidden;
-	border: 1px solid rgba(17, 17, 17, 0.08);
-	box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+	padding: 0;
 	background: #fff;
 }
 
-.splash-map-ctnr {
+.splash-map-grid {
+	display: grid;
+	min-width: 0;
+	grid-template-columns: 50vw 50vw;
+	height: calc(100vh - 83px);
+	overflow: hidden;
+}
+
+.splash-map-grid > .search-wrap {
+	height: 100%;
+}
+
+.splash-map-grid > .map-ctnr {
+	height: 100%;
+}
+
+.splash-map-grid .map-ctnr {
 	width: 100%;
-	height: 660px;
 }
 
 @media screen and (max-width: 1200px) {
@@ -174,28 +158,22 @@
 }
 
 @media screen and (max-width: 700px) {
-	.splash-newly-listed {
-		padding: 20px 20px 40px;
-	}
-
-	.splash-newly-listed-head {
-		align-items: flex-start;
-		flex-direction: column;
-	}
-
-	.splash-newly-listed-grid {
-		grid-template-columns: 1fr;
-	}
-
 	.splash-map-section {
-		padding: 20px 20px 40px;
+		padding: 0;
 	}
 
-	.splash-map-ctnr {
+	.splash-map-grid {
+		grid-template-columns: 1fr;
+		height: auto;
+	}
+
+	.splash-map-grid > .search-wrap {
+		height: auto;
+	}
+
+	.splash-map-grid .map-ctnr {
+		display: block;
 		height: 420px;
 	}
 
-	.splash-map-search-btn {
-		width: 100%;
-	}
 }

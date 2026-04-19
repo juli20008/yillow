@@ -21,7 +21,6 @@ def property_feed():
             selectinload(Property.images),
         )
         .order_by(Property.listing_date.desc(), Property.price.asc())
-        .limit(4)
         .all()
     )
 
