@@ -2,18 +2,21 @@
 	display: grid;
 	grid-template-columns: 250px auto;
 	height: calc(100vh - 83px);
+	background: var(--bg-canvas);
 }
 
 .chat-channel-wrap {
 	display: flex;
 	flex-direction: column;
-	padding: 20px;
-	background-color: var(--lightblue);
-	gap: 20px;
+	padding: 28px 22px;
+	background-color: #f8fafc;
+	gap: 18px;
+	border-right: 1px solid var(--border-subtle);
 }
 
 .chat-channel-wrap .active {
-	background-color: rgb(191, 233, 247);
+	background-color: #eef2f7;
+	box-shadow: var(--shadow-soft-sm);
 }
 
 .chat-channel-wrap .active .office {
@@ -31,7 +34,7 @@
 .chat-chats-wrap {
 	display: grid;
 	grid-template-rows: auto 70px;
-	background-color: white;
+	background-color: #ffffff;
 }
 
 .channel-user-wrap {
@@ -39,15 +42,17 @@
 	grid-template-columns: 60px auto;
 	gap: 10px;
 	align-items: center;
-	padding: 5px;
-	border-radius: 5px;
-	transition: all 0.25s;
-	background-color: var(--lightblue);
+	padding: 10px;
+	border-radius: 12px;
+	transition: all 300ms ease;
+	background-color: #ffffff;
+	border: 1px solid var(--border-subtle);
 	cursor: pointer;
 }
 
 .channel-user-wrap:hover {
-	filter: brightness(90%);
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-soft-sm);
 }
 
 .channel-user-wrap .photo {
@@ -122,8 +127,8 @@
 .chat-boxes-wrap {
 	display: flex;
 	flex-direction: column;
-	padding: 20px;
-	gap: 20px;
+	padding: 28px;
+	gap: 16px;
 	height: calc(100vh - 160px);
 	overflow-x: hidden;
 	white-space: nowrap;
@@ -139,9 +144,10 @@
 }
 
 .other-chatbox-wrap .other-message {
-	padding: 20px;
+	padding: 14px 16px;
 	border-radius: 20px 20px 20px 0px;
-	background-color: lightblue;
+	background-color: #f8fafc;
+	box-shadow: 0 1px 4px rgb(15 23 42 / 0.03);
 	position: relative;
 	max-width: 80%;
 	width: fit-content;
@@ -152,7 +158,7 @@
 	content: " ";
 	width: 2px;
 	height: 2px;
-	background-color: lightblue;
+	background-color: #f8fafc;
 	position: absolute;
 	bottom: 0px;
 	left: -2px;
@@ -210,9 +216,10 @@
 }
 
 .my-chatbox-wrap .my-message {
-	padding: 10px;
+	padding: 12px;
 	border-radius: 20px 20px 0px 20px;
-	background-color: lightgray;
+	background-color: #f1f5f9;
+	box-shadow: 0 1px 4px rgb(15 23 42 / 0.025);
 	position: relative;
 	max-width: 80%;
 	width: fit-content;
@@ -225,9 +232,9 @@
 .my-chatbox-wrap .my-message input,
 .my-chatbox-wrap .my-message input:disabled,
 .my-chatbox-wrap .my-message .msg {
-	color: black;
-	padding: 10px;
-	font-size: 16px;
+	color: #0f172a;
+	padding: 8px 10px;
+	font-size: 15px;
 	border-radius: 10px;
 	width: fit-content;
 }
@@ -247,7 +254,7 @@
 	content: " ";
 	width: 2px;
 	height: 2px;
-	background-color: lightgray;
+	background-color: #f1f5f9;
 	position: absolute;
 	bottom: 0px;
 	right: -2px;
@@ -258,7 +265,7 @@
 	display: flex;
 	justify-content: center;
 	width: 100%;
-	padding: 0px 20px 20px 20px;
+	padding: 0 28px 24px;
 }
 
 .send-chat-desc {
@@ -289,17 +296,19 @@
 /* Delete Chat Modal */
 .delete-chat-modal {
 	background-color: white;
-	border-radius: 10px;
-	padding: 40px;
+	border-radius: 16px;
+	padding: 48px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 20px;
+	gap: 24px;
+	box-shadow: var(--shadow-soft-lg);
+	border: 1px solid var(--border-subtle);
 }
 
 .delete-chat-modal .message {
-	background-color: var(--lightblue);
-	border: 1px solid var(--blue);
-	padding: 10px;
-	border-radius: 5px;
+	background-color: #f8fafc;
+	border: 1px solid var(--border-subtle);
+	padding: 16px;
+	border-radius: 12px;
 }

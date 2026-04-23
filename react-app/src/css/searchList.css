@@ -1,8 +1,9 @@
 .search-pg-ctrl {
 	display: grid;
-	grid-template-columns: 50vw 50vw;
+	grid-template-columns: 56vw 44vw;
 	height: calc(100vh - 83px);
 	overflow: hidden;
+	background-color: #f3f3f1;
 }
 
 .search-wrap {
@@ -11,7 +12,7 @@
 	height: 100%;
 	min-height: 0;
 	z-index: 0;
-	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+	background: #f3f3f1;
 }
 
 .search-bar-wrap {
@@ -47,13 +48,13 @@
 	min-height: 0;
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	padding: 20px;
+	padding: 12px 16px;
 	gap: 10px;
 	overflow-x: hidden;
 	overflow-y: auto;
 	white-space: nowrap;
 	scrollbar-width: thin;
-	scrollbar-color: var(--blue) #e6e6e6;
+	scrollbar-color: #bdbdb7 #ecece8;
 }
 
 .search-list::-webkit-scrollbar {
@@ -61,13 +62,13 @@
 }
 
 .search-list::-webkit-scrollbar-track {
-	background: #e6e6e6;
+	background: #ecece8;
 }
 
 .search-list::-webkit-scrollbar-thumb {
-	background: var(--blue);
+	background: #bdbdb7;
 	border-radius: 999px;
-	border: 2px solid #e6e6e6;
+	border: 2px solid #ecece8;
 }
 
 .search-pagination {

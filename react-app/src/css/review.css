@@ -1,9 +1,9 @@
 .review-box {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
-	border-top: 1px solid gray;
-	padding: 20px 0px;
+	gap: 14px;
+	border-top: 1px solid var(--border-subtle);
+	padding: 26px 0;
 }
 
 .reveiew-char {
@@ -51,15 +51,17 @@
 /* Delete Review */
 .review-delete {
 	background-color: white;
-	padding: 40px;
-	border-radius: 10px;
-	width: 600px;
+	padding: 52px;
+	border-radius: 16px;
+	width: min(640px, 94vw);
 	max-height: 90vh;
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 24px;
 	overflow-x: hidden;
 	white-space: nowrap;
+	border: 1px solid var(--border-subtle);
+	box-shadow: var(--shadow-soft-lg);
 }
 
 .review-delete .title {
@@ -68,13 +70,13 @@
 }
 
 .review-delete .content {
-	font-size: 18px;
+	font-size: 16px;
 	line-height: 24px;
-	font-weight: lighter;
-	padding: 20px;
-	background-color: var(--lightblue);
-	border-radius: 10px;
-	border: 1px solid var(--blue);
+	font-weight: 500;
+	padding: 22px;
+	background-color: #f8fafc;
+	border-radius: 12px;
+	border: 1px solid var(--border-subtle);
 	white-space: normal;
 }
 
@@ -86,18 +88,20 @@
 
 /* Review Modal */
 .review-ctrl {
-	padding: 40px;
+	padding: 52px;
 	background-color: white;
-	border-radius: 10px;
+	border-radius: 16px;
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 24px;
 	align-items: center;
-	width: 500px;
+	width: min(560px, 92vw);
 	min-height: fit-content;
 	max-height: 90vh;
 	overflow-x: hidden;
 	white-space: nowrap;
+	border: 1px solid var(--border-subtle);
+	box-shadow: var(--shadow-soft-lg);
 }
 
 .review-ctrl .for {
@@ -109,14 +113,13 @@
 	width: 120px;
 	height: 120px;
 	border-radius: 100%;
-	background-color: var(--lightblue);
+	background-color: #f8fafc;
 	background-position: center;
 	background-size: cover;
 }
 
 .review-ctrl .agent-name {
 	font-size: 26px;
-	font-family: "Open Sans", sans-serif;
 	font-weight: bold;
 }
 
@@ -132,14 +135,15 @@
 .review-ctrl .stars-how,
 .review-ctrl .content-how {
 	font-size: 14px;
-	font-weight: lighter;
+	font-weight: 500;
+	color: var(--text-secondary);
 }
 
 .content-wrap .textarea {
-	padding: 20px;
-	background-color: var(--lightblue);
-	border-radius: 10px;
-	border: 1px solid var(--blue2);
+	padding: 18px;
+	background-color: #ffffff;
+	border-radius: 12px;
+	border: 1px solid var(--border-subtle);
 }
 
 .review-ctrl .errors {
@@ -158,8 +162,9 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 40px;
-	gap: 40px;
+	padding: 56px 32px;
+	gap: 46px;
+	background: #fff;
 }
 
 .agent-rvw-stars-wrap {

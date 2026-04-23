@@ -1,6 +1,4 @@
-import StarFull from "../../assets/stars/star-solid.svg";
-import StarHalf from "../../assets/stars/star-half.svg";
-import StarOutline from "../../assets/stars/star-regular.svg";
+import { Star } from "lucide-react";
 
 const Stars = ({ rating }) => {
 	let num = rating;
@@ -22,29 +20,29 @@ const Stars = ({ rating }) => {
 			{starArr.map((num, idx) => {
 				if (num === 1)
 					return (
-						<img
+						<Star
 							key={"star" + idx}
-							className="star"
-							src={StarFull}
-							alt="star"
+							className="star-icon star-full"
+							size={18}
+							strokeWidth={1.5}
 						/>
 					);
 				else if (num === 0.5)
 					return (
-						<img
-							key={"star" + idx}
-							className="star"
-							src={StarHalf}
-							alt="star"
-						/>
+						<span key={"star" + idx} className="star-half-wrap">
+							<Star className="star-icon star-empty" size={18} strokeWidth={1.5} />
+							<span className="star-half-fill">
+								<Star className="star-icon star-full" size={18} strokeWidth={1.5} />
+							</span>
+						</span>
 					);
 				else
 					return (
-						<img
+						<Star
 							key={"star" + idx}
-							className="star"
-							src={StarOutline}
-							alt="star"
+							className="star-icon star-empty"
+							size={18}
+							strokeWidth={1.5}
 						/>
 					);
 			})}

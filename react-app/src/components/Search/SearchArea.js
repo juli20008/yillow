@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -19,10 +19,12 @@ const SearchArea = () => {
 	const [type, setType] = useState("");
 	const [bed, setBed] = useState(0);
 	const [bath, setBath] = useState(0);
-	const [center, setCenter] = useState({ lat: 37.0903, lon: 95.7129 });
+	const [center, setCenter] = useState({ lat: 37.0903, lng: -95.7129 });
 	const [propArr, setPropArr] = useState([]);
 	const [over, setOver] = useState({ id: 0 });
 	const [zoom, setZoom] = useState(10);
+	const [isMapSyncing, setIsMapSyncing] = useState(false);
+	const mapSyncTimer = useRef(null);
 
 	useEffect(() => {
 		if (areaParam) {
@@ -72,30 +74,43 @@ const SearchArea = () => {
 	}, [min, max, type, bed, bath, properties]);
 
 	useEffect(() => {
-		if (propArr.length) {
-			const latArr = propArr.map((prop) => prop.lat);
-			const lngArr = propArr.map((prop) => prop.lng);
-			const centerLat = latArr.reduce((acc, el) => acc + el) / latArr.length;
-			const centerLng = lngArr.reduce((acc, el) => acc + el) / lngArr.length;
-			setCenter({ lat: centerLat, lng: centerLng });
-		} else setCenter({ lat: 39.5, lng: -98.35 });
-	}, [propArr]);
+		return () => {
+			if (mapSyncTimer.current) {
+				clearTimeout(mapSyncTimer.current);
+			}
+		};
+	}, []);
+
+	const handleMapBoundsChange = (bounds) => {
+		if (!bounds) return;
+		if (mapSyncTimer.current) {
+			clearTimeout(mapSyncTimer.current);
+		}
+		setIsMapSyncing(true);
+		mapSyncTimer.current = setTimeout(async () => {
+			await dispatch(propertyActions.areaProperties(bounds));
+			setIsMapSyncing(false);
+		}, 220);
+	};
 
 	const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 	const googleMapURL = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.exp&libraries=geometry,drawing,places`;
 
 	return (
-		<main className="search-pg-ctrl">
+		<main className="search-pg-ctrl bg-[#f3f3f1]">
 			<MyMap
 				isMarkerShown
 				googleMapURL={googleMapURL}
 				loadingElement={<div style={{ height: `100%` }} />}
-				containerElement={<div className="map-ctnr" />}
+				containerElement={<div className="map-ctnr overflow-hidden border-r border-[#dcdcd7]" />}
 				mapElement={<div style={{ height: `100%` }} />}
 				markers={propArr}
 				center={center}
 				over={over}
 				zoom={zoom}
+				onBoundsChange={handleMapBoundsChange}
+				enableAreaSearch={false}
+				syncCenter={false}
 			/>
 			<List
 				min={min}
@@ -110,6 +125,8 @@ const SearchArea = () => {
 				setBath={setBath}
 				propArr={propArr}
 				setOver={setOver}
+				showMapAreaButton={false}
+				isMapSyncing={isMapSyncing}
 			/>
 		</main>
 	);

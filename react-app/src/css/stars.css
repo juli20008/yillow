@@ -1,10 +1,36 @@
 .star-wrap {
 	display: flex;
+	align-items: center;
+	gap: 2px;
 }
 
-.star {
-	width: 20px;
-	height: 20px;
+.star-icon {
+	width: 18px;
+	height: 18px;
+	transition: all 300ms ease;
+}
+
+.star-full {
+	color: #0f172a;
+	fill: #0f172a;
+}
+
+.star-empty {
+	color: #cbd5e1;
+	fill: transparent;
+}
+
+.star-half-wrap {
+	position: relative;
+	display: inline-flex;
+}
+
+.star-half-fill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 50%;
+	overflow: hidden;
+	display: inline-flex;
 }
 
 .star-rating button {
@@ -25,20 +51,38 @@
 }
 
 .big-star-wrap {
-	background: url("../assets/stars/star-rating-sprite.png") repeat-x;
-	font-size: 0;
-	height: 75px;
-	line-height: 0;
-	overflow: hidden;
-	text-indent: -999em;
-	width: 375px;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: auto;
+	line-height: 1;
+	width: auto;
 	margin: 0 auto;
 }
 
-.big-star-sprite {
-	background: url("../assets/stars/star-rating-sprite.png") repeat-x;
-	background-position: 0 100%;
-	float: left;
-	height: 75px;
-	display: block;
+.big-star-unit {
+	position: relative;
+	display: inline-flex;
+}
+
+.big-star-icon {
+	width: 34px;
+	height: 34px;
+}
+
+.big-star-empty {
+	color: #cbd5e1;
+	fill: transparent;
+}
+
+.big-star-fill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	overflow: hidden;
+	display: inline-flex;
+}
+
+.big-star-full {
+	color: #0f172a;
+	fill: #0f172a;
 }

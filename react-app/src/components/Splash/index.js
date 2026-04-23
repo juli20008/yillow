@@ -1,5 +1,13 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import {
+	ArrowRight,
+	Bookmark,
+	MapPin,
+	Search,
+	SlidersHorizontal,
+	TrendingUp,
+} from "lucide-react";
 
 import MyMap from "../Search/Map";
 import List from "../Search/List";
@@ -96,48 +104,77 @@ const Splash = () => {
 	return (
 		<>
 			<main className="splash-ctrl">
-				<form className="splash-search-wrap" onSubmit={handleSubmit}>
-					<div className="splash-search-title">
-						Find the right home faster and request a showing today.
+				<section className="splash-search-wrap">
+					<div className="splash-hero-head">
+						<p className="splash-kicker">Modern home intelligence</p>
+						<h1 className="splash-search-title">
+							Find your next property with calm, data-backed clarity.
+						</h1>
+						<p className="splash-subtitle">
+							Search live inventory, scan map movement in real time, and book
+							showings without friction.
+						</p>
 					</div>
-					<label className="search-label">
-						<input
-							type="text"
-							className="search-input"
-							placeholder={placeholder}
-							value={search}
-							onChange={(e) => setSearch(e.target.value)}
-							onFocus={() =>
-								setPlaceholder('Don\'t know where to start? Try "Toronto"')
-							}
-							onBlur={() =>
-								setPlaceholder("Enter an address, city, or Postal Code")
-							}
-							ref={searchDivRef}
-						/>
-
-						<i
-							className="fa-solid fa-magnifying-glass"
-							onClick={handleSubmit}
-						></i>
-						{error && <div className="splash-error">{error}</div>}
-						<div className="search-dd" ref={searchDDRef}>
-							{searchFiltered.map((term) => (
-								<div
-									className="div"
-									key={term}
-									onMouseDown={(e) => {
-										setSearch(term);
-										directSearch(term);
-									}}
-								>
-									<i className="fa-solid fa-magnifying-glass"></i>
-									<div className="term">{term}</div>
-								</div>
-							))}
+					<form className="splash-search-panel" onSubmit={handleSubmit}>
+						<label className="search-label">
+							<Search size={18} strokeWidth={1.5} className="search-icon" />
+							<input
+								type="text"
+								className="search-input"
+								placeholder={placeholder}
+								value={search}
+								onChange={(e) => setSearch(e.target.value)}
+								onFocus={() =>
+									setPlaceholder('Don\'t know where to start? Try "Toronto"')
+								}
+								onBlur={() =>
+									setPlaceholder("Enter an address, city, or Postal Code")
+								}
+								ref={searchDivRef}
+							/>
+							{error && <div className="splash-error">{error}</div>}
+							<div className="search-dd" ref={searchDDRef}>
+								{searchFiltered.map((term) => (
+									<div
+										className="div"
+										key={term}
+										onMouseDown={() => {
+											setSearch(term);
+											directSearch(term);
+										}}
+									>
+										<Search size={15} strokeWidth={1.5} />
+										<div className="term">{term}</div>
+									</div>
+								))}
+							</div>
+						</label>
+						<div className="splash-actions">
+							<button type="button" className="splash-btn splash-btn-ghost">
+								<SlidersHorizontal size={16} strokeWidth={1.5} />
+								Filters
+							</button>
+							<button type="submit" className="splash-btn splash-btn-primary">
+								Start Search
+								<ArrowRight size={16} strokeWidth={1.5} />
+							</button>
 						</div>
-					</label>
-				</form>
+					</form>
+					<div className="splash-metrics">
+						<div className="splash-metric-card">
+							<TrendingUp size={16} strokeWidth={1.5} />
+							<span>Live pricing movements</span>
+						</div>
+						<div className="splash-metric-card">
+							<MapPin size={16} strokeWidth={1.5} />
+							<span>Map-linked inventory feed</span>
+						</div>
+						<div className="splash-metric-card">
+							<Bookmark size={16} strokeWidth={1.5} />
+							<span>Save & compare instantly</span>
+						</div>
+					</div>
+				</section>
 				<section className="splash-map-section">
 					<div className="search-pg-ctrl splash-map-grid">
 						<MyMap

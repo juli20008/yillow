@@ -27,20 +27,20 @@ const MyMap = withScriptjs(
 
 		const iconPin = {
 			path: "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z",
-			fillColor: "#ef3d4d",
+			fillColor: "#0f172a",
 			strokeColor: "#ffffff",
-			strokeWeight: 2,
-			fillOpacity: 1,
-			scale: 0.03, //to reduce the size of icons
+			strokeWeight: 2.5,
+			fillOpacity: 0.98,
+			scale: 0.032,
 		};
 
 		const iconOver = {
 			path: "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z",
-			fillColor: "green",
+			fillColor: "#1e293b",
 			strokeColor: "#ffffff",
-			strokeWeight: 2,
+			strokeWeight: 2.5,
 			fillOpacity: 1,
-			scale: 0.03, //to reduce the size of icons
+			scale: 0.036,
 		};
 
 		const handleToggleOpen = (markerId) => {
@@ -68,22 +68,36 @@ const MyMap = withScriptjs(
 			}
 		};
 
-		const setArea = () => {
-			let ne = mapRef.current.getBounds().getNorthEast();
-			let sw = mapRef.current.getBounds().getSouthWest();
-			let zoom = mapRef.current.getZoom();
-			const url = `/area/neLat=${ne.lat()}&neLng=${ne.lng()}&swLat=${sw.lat()}&swLng=${sw.lng()}&zoom=${zoom}`;
+		const getBoundsPayload = () => {
+			if (!mapRef.current || !mapRef.current.getBounds()) {
+				return null;
+			}
+			const ne = mapRef.current.getBounds().getNorthEast();
+			const sw = mapRef.current.getBounds().getSouthWest();
+			const zoom = mapRef.current.getZoom();
+			return {
+				neLat: ne.lat(),
+				neLng: ne.lng(),
+				swLat: sw.lat(),
+				swLng: sw.lng(),
+				zoom,
+			};
+		};
 
-			if (!areaParam) {
+		const setArea = () => {
+			const bounds = getBoundsPayload();
+			if (!bounds) return;
+			const url = `/area/neLat=${bounds.neLat}&neLng=${bounds.neLng}&swLat=${bounds.swLat}&swLng=${bounds.swLng}&zoom=${bounds.zoom}`;
+
+			if (!areaParam && props.setUrl) {
 				props.setUrl(url);
 			}
 		};
 
 		const searchArea = () => {
-			let ne = mapRef.current.getBounds().getNorthEast();
-			let sw = mapRef.current.getBounds().getSouthWest();
-			let zoom = mapRef.current.getZoom();
-			const url = `/area/neLat=${ne.lat()}&neLng=${ne.lng()}&swLat=${sw.lat()}&swLng=${sw.lng()}&zoom=${zoom}`;
+			const bounds = getBoundsPayload();
+			if (!bounds) return;
+			const url = `/area/neLat=${bounds.neLat}&neLng=${bounds.neLng}&swLat=${bounds.swLat}&swLng=${bounds.swLng}&zoom=${bounds.zoom}`;
 
 			if (areaParam) {
 				history.push(url);
@@ -132,10 +146,10 @@ const MyMap = withScriptjs(
 		}, [props.over]);
 
 		useEffect(() => {
-			if (mapRef.current && props.center) {
+			if (mapRef.current && props.center && props.syncCenter !== false) {
 				mapRef.current.panTo(props.center);
 			}
-		}, [props.center]);
+		}, [props.center, props.syncCenter]);
 
 		const enableAreaSearch = props.enableAreaSearch !== false;
 
@@ -156,11 +170,53 @@ const MyMap = withScriptjs(
 						if (enableAreaSearch) {
 							setArea();
 						}
+						if (props.onBoundsChange) {
+							const bounds = getBoundsPayload();
+							props.onBoundsChange(bounds);
+						}
 					}}
 					onDragEnd={() => {
 						if (enableAreaSearch) {
 							searchArea();
 						}
+					}}
+					options={{
+						disableDefaultUI: true,
+						zoomControl: true,
+						fullscreenControl: false,
+						streetViewControl: false,
+						mapTypeControl: false,
+						gestureHandling: "greedy",
+						styles: [
+							{ elementType: "geometry", stylers: [{ color: "#efefeb" }] },
+							{ elementType: "labels.text.fill", stylers: [{ color: "#61615b" }] },
+							{ elementType: "labels.text.stroke", stylers: [{ color: "#efefeb" }] },
+							{
+								featureType: "poi",
+								elementType: "labels",
+								stylers: [{ visibility: "off" }],
+							},
+							{
+								featureType: "transit",
+								elementType: "labels",
+								stylers: [{ visibility: "off" }],
+							},
+							{
+								featureType: "road",
+								elementType: "geometry",
+								stylers: [{ color: "#ffffff" }],
+							},
+							{
+								featureType: "road.highway",
+								elementType: "geometry",
+								stylers: [{ color: "#efefef" }],
+							},
+							{
+								featureType: "water",
+								elementType: "geometry",
+								stylers: [{ color: "#b7d4e6" }],
+							},
+						],
 					}}
 				>
 					<div></div>

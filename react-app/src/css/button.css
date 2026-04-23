@@ -1,16 +1,18 @@
 .btn {
-	background-color: var(--blue);
-	padding: 10px 20px;
-	border-radius: 5px;
+	background-color: var(--cta-primary);
+	padding: 12px 22px;
+	border-radius: 12px;
 	border: none;
 	color: white;
-	font-size: 16px;
-	transition: all 0.25s;
+	font-size: 15px;
+	font-weight: 600;
+	transition: all 300ms ease;
 	cursor: pointer;
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
 	align-items: center;
+	box-shadow: var(--shadow-soft-sm);
 }
 
 .btn-bl {
@@ -26,11 +28,13 @@
 }
 
 .btn:hover {
-	background-color: var(--blue2);
+	background-color: #020617;
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-soft-md);
 }
 
 .btn-font {
-	color: var(--blue);
+	color: var(--text-primary);
 	font-weight: bold;
 	background-color: transparent;
 	border: none;
@@ -38,12 +42,12 @@
 }
 
 .btn-font:hover {
-	color: var(--blue2);
+	color: #020617;
 }
 
 .btn-font-lt {
-	color: black;
-	font-weight: lighter;
+	color: #111827;
+	font-weight: 500;
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
@@ -51,7 +55,7 @@
 }
 
 .btn-font-lt:hover {
-	color: var(--blue2);
+	color: #020617;
 }
 
 .btn-desc {
