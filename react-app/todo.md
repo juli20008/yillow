@@ -13,3 +13,9 @@ This container on main page is not perfect: ![](image-5.png) adjust it to look l
 首页map view的房子还是很少，要像map view page那样覆盖整个gta的map
 
 Add a seach by map button below search box on main page hero section
+
+We do not need the home page, we can start with the map search page as our home page.
+
+https://www.rew.ca/
+
+upgrade the project to a more modern UI, similar to rew.ca

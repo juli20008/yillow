@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import LoginForm from "./components/auth/LoginForm";
 import SignUpForm from "./components/auth/SignUpForm";
 import NavBar from "./components/NavBar";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import Splash from "./components/Splash";
 import Search from "./components/Search";
 import SearchArea from "./components/Search/SearchArea";
 import Appointments from "./components/Appointments";
@@ -23,6 +22,8 @@ import About from "./components/About";
 function App() {
 	const [loaded, setLoaded] = useState(false);
 	const dispatch = useDispatch();
+	const defaultArea =
+		"/area/neLat=44.20&neLng=-78.90&swLat=43.30&swLng=-80.80&zoom=10";
 
 	useEffect(() => {
 		(async () => {
@@ -41,7 +42,7 @@ function App() {
 			<Notification />
 			<Switch>
 				<Route path="/" exact={true}>
-					<Splash />
+					<Redirect to={defaultArea} />
 				</Route>
 				<Route path="/search/:searchParam" exact={true}>
 					<Search />
