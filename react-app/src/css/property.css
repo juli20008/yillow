@@ -29,9 +29,9 @@
 
 .property-front {
 	width: 100%;
-	padding-top: 100%;
-	background-size: cover;
-	background-position: center;
+	aspect-ratio: 1;
+	object-fit: cover;
+	display: block;
 	cursor: pointer;
 }
 
@@ -43,9 +43,9 @@
 
 .property-img {
 	width: 100%;
-	padding-top: 100%;
-	background-size: cover;
-	background-position: center;
+	aspect-ratio: 1;
+	object-fit: cover;
+	display: block;
 	cursor: pointer;
 }
 

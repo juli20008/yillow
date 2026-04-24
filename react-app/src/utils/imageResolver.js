@@ -16,10 +16,13 @@ export const FALLBACK_IMAGE =
  */
 export const resolveUrl = (url) => {
 	if (!url || typeof url !== "string") return null;
-	if (url.includes("amazonaws.com")) return null;
-	if (url.startsWith("http")) return url;
+	const trimmed = url.trim();
+	if (!trimmed) return null;
+	if (trimmed.includes("amazonaws.com")) return null;
+	if (trimmed.startsWith("http")) return trimmed;
 	// Relative path → Repliers CDN (strip any accidental leading slashes)
-	const clean = url.replace(/^\/+/, "");
+	const clean = trimmed.replace(/^\/+/, "");
+	if (!clean) return null;
 	return `${REPLIERS_CDN}/${clean}`;
 };
 

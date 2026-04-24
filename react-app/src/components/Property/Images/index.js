@@ -9,8 +9,12 @@ import {
 
 const GalleryTile = ({ url }) => {
 	const [src, setSrc] = useState(url);
-	useEffect(() => { setSrc(url); }, [url]);
+	const [failed, setFailed] = useState(false);
+	useEffect(() => { setSrc(url); setFailed(false); }, [url]);
 	const [showModal, setShowModal] = useState(false);
+
+	if (failed) return null;
+
 	return (
 		<>
 			<img
@@ -18,7 +22,7 @@ const GalleryTile = ({ url }) => {
 				src={src}
 				alt="Gallery"
 				onClick={() => setShowModal(true)}
-				onError={() => setSrc(FALLBACK_IMAGE)}
+				onError={() => setFailed(true)}
 			/>
 			{showModal && (
 				<Modal onClose={() => setShowModal(false)}>
@@ -27,7 +31,7 @@ const GalleryTile = ({ url }) => {
 						src={src}
 						alt="Gallery"
 						onClick={() => setShowModal(false)}
-						onError={() => setSrc(FALLBACK_IMAGE)}
+						onError={() => setShowModal(false)}
 					/>
 				</Modal>
 			)}
