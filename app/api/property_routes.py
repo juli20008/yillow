@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from sqlalchemy.orm import selectinload
 from app.models import Property
 from app.models import User
+from app.models.mls_listing import MlsListing
 
 property_routes = Blueprint('properties', __name__)
 
@@ -43,4 +44,24 @@ def property_imgs(property_id):
     property = Property.query.get(property_id)
     return {
         "images": [image.to_dict() for image in property.images]
+    }
+
+
+@property_routes.route("/mls_<int:mls_id>/images")
+def mls_property_imgs(mls_id):
+    """
+    Serves images for MLS listings. The frontend calls
+    getAllImages(property.id) where id is 'mls_<n>', which maps here.
+    Returns synthetic image objects with the same {id, img_url} shape
+    as PropertyImg.to_dict() so the Images component renders unchanged.
+    """
+    listing = MlsListing.query.get(mls_id)
+    if not listing:
+        return {"images": []}
+    imgs = listing.images or []
+    return {
+        "images": [
+            {"id": f"mls-img-{mls_id}-{i}", "img_url": url}
+            for i, url in enumerate(imgs)
+        ]
     }

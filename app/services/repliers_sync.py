@@ -19,15 +19,24 @@ def _get_headers():
     return {'REPLIERS-API-KEY': api_key}
 
 
-def _fetch_page(page_num, results_per_page=BATCH_SIZE):
+def _fetch_page(page_num, results_per_page=BATCH_SIZE, retries=3):
     url = f'{REPLIERS_BASE_URL}/listings'
     params = {'pageNum': page_num, 'resultsPerPage': results_per_page}
-    resp = requests.get(url, headers=_get_headers(), params=params, timeout=30)
-    resp.raise_for_status()
-    data = resp.json()
-    if isinstance(data, list):
-        raise RuntimeError(f'Repliers API error: {data}')
-    return data
+    for attempt in range(retries):
+        try:
+            resp = requests.get(url, headers=_get_headers(), params=params, timeout=30)
+            resp.raise_for_status()
+            data = resp.json()
+            if isinstance(data, list):
+                raise RuntimeError(f'Repliers API error: {data}')
+            return data
+        except requests.exceptions.HTTPError as e:
+            if attempt < retries - 1 and e.response.status_code in (429, 500, 502, 503, 504):
+                wait = 5 * (attempt + 1)
+                print(f' [retry {attempt+1}/{retries-1} in {wait}s]', end=' ', flush=True)
+                time.sleep(wait)
+            else:
+                raise
 
 
 def _to_db_dict(schema: StandardPropertySchema) -> dict:
@@ -87,10 +96,13 @@ def _upsert_batch(batch: list[dict]) -> int:
     return len(batch)
 
 
-def sync_listings(max_pages=None, verbose=True):
+def sync_listings(max_pages=None, start_page=1, verbose=True):
     """
     Fetch listings from Repliers, adapt through StandardPropertySchema,
     and UPSERT into mls_listings. Safe to re-run. Returns total rows upserted.
+
+    Use start_page to resume an interrupted sync without re-processing
+    pages that already completed.
     """
     first_page = _fetch_page(1, results_per_page=BATCH_SIZE)
     num_pages = first_page.get('numPages', 1)
@@ -102,7 +114,7 @@ def sync_listings(max_pages=None, verbose=True):
     if verbose:
         print(f'[repliers] {total_count:,} listings, '
               f'{first_page.get("numPages"):,} total pages at batch={BATCH_SIZE} '
-              f'(syncing {num_pages} pages)')
+              f'(syncing pages {start_page}–{num_pages})')
 
     total_upserted = 0
 
@@ -119,9 +131,11 @@ def sync_listings(max_pages=None, verbose=True):
                   f'(total: {total_upserted + count})')
         return count
 
-    total_upserted += _process(1, first_page)
+    if start_page == 1:
+        total_upserted += _process(1, first_page)
+        start_page = 2
 
-    for page in range(2, num_pages + 1):
+    for page in range(start_page, num_pages + 1):
         if verbose:
             print(f'[repliers] fetching page {page}/{num_pages}...', end=' ', flush=True)
         time.sleep(REQUEST_DELAY)

@@ -66,6 +66,57 @@ class MlsListing(db.Model):
         imgs = self.images or []
         return imgs[0] if imgs else None
 
+    def _sqft_int(self):
+        """Return sqft as int for price/sqft calc; None if unparseable."""
+        try:
+            return int(self.sqft) if self.sqft else None
+        except (ValueError, TypeError):
+            return None
+
+    def to_frontend_dict(self):
+        """
+        Shape that matches Property.to_dict() so the existing React
+        components render MLS listings without modification.
+
+        Key decisions:
+        - id prefixed 'mls_<id>' avoids collision with seeded property IDs.
+        - type uses style (e.g. 'Single Family Residence', 'Townhouse',
+          'Condominium') so the UI dropdown filter works via .includes().
+        - image_urls carries direct URLs; images:[] signals no PropertyImg IDs.
+        - listing_agent_id is null — Property/index.js guards this.
+        """
+        imgs = self.images or []
+        sqft_int = self._sqft_int()
+        return {
+            'id': f'mls_{self.id}',
+            'is_mls': True,
+            'mls_number': self.mls_number,
+            'status': self.standard_status or self.status or 'Active',
+            'type': self.style or self.property_type or self.transaction_type or '',
+            'price': self.list_price or 0,
+            'bed': self.bed or 0,
+            'bath': float(self.bath) if self.bath is not None else 0,
+            'sqft': sqft_int,
+            'lot': None,
+            'built': self.year_built,
+            'garage': None,
+            'street': self.street,
+            'city': self.city or '',
+            'state': self.state or '',
+            'zip': self.zip or '',
+            'listing_id': self.mls_number,
+            'listing_date': self.list_date.date().isoformat() if self.list_date else None,
+            'description': self.description,
+            'listing_agent_id': None,
+            'office': self.brokerage or '',
+            'agent_name': self.agent_name,
+            'front_img': imgs[0] if imgs else None,
+            'images': [],
+            'image_urls': imgs,
+            'lat': float(self.lat) if self.lat is not None else None,
+            'lng': float(self.lng) if self.lng is not None else None,
+        }
+
     def to_dict(self):
         return {
             'id': self.id,

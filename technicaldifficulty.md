@@ -65,3 +65,5 @@
 
 利用它的终端权限： Claude Code 可以帮你运行 curl 来测试 Repliers API 是否连通。你可以说："Run a curl command to test the Repliers API connection before writing any code."
 
+
+![alt text](image-7.png)

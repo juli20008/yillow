@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -9,9 +9,9 @@ import * as propertyActions from "../../store/property";
 
 const SearchArea = () => {
 	const dispatch = useDispatch();
-	// param format /neLat=34.03411175190029&neLng=-117.58240595947267&swLat=33.91424721998569&swLng=-117.82341853271485
 	const { areaParam } = useParams();
 
+	// state.properties is a flat { [id]: property } object — do NOT chain .properties
 	const properties = useSelector((state) => state.properties);
 
 	const [min, setMin] = useState(0);
@@ -19,7 +19,15 @@ const SearchArea = () => {
 	const [type, setType] = useState("");
 	const [bed, setBed] = useState(0);
 	const [bath, setBath] = useState(0);
-	const [center, setCenter] = useState({ lat: 37.0903, lng: -95.7129 });
+
+	const getInitialCenter = (param) => {
+		if (!param) return { lat: 37.0903, lng: -95.7129 };
+		const parts = param.split("&").map((p) => parseFloat(p.split("=")[1]));
+		const [neLat, neLng, swLat, swLng] = parts;
+		return { lat: (neLat + swLat) / 2, lng: (neLng + swLng) / 2 };
+	};
+
+	const [center] = useState(() => getInitialCenter(areaParam));
 	const [propArr, setPropArr] = useState([]);
 	const [over, setOver] = useState({ id: 0 });
 	const [zoom, setZoom] = useState(10);
@@ -28,19 +36,18 @@ const SearchArea = () => {
 
 	useEffect(() => {
 		if (areaParam) {
-			const [neLat, neLng, swLat, swLng, zoom] = areaParam
+			const [neLat, neLng, swLat, swLng, zoomStr] = areaParam
 				.split("&")
 				.map((each) => each.split("=")[1]);
 			const payload = { neLat, neLng, swLat, swLng };
 			dispatch(propertyActions.areaProperties(payload));
-			setZoom(parseInt(zoom, 10));
+			setZoom(parseInt(zoomStr, 10));
 		}
 	}, [dispatch, areaParam]);
 
 	useEffect(() => {
 		document.documentElement.classList.add("search-page-lock");
 		document.body.classList.add("search-page-lock");
-
 		return () => {
 			document.documentElement.classList.remove("search-page-lock");
 			document.body.classList.remove("search-page-lock");
@@ -48,50 +55,42 @@ const SearchArea = () => {
 	}, []);
 
 	useEffect(() => {
-		let arr = Object.values(properties)
+		const arr = Object.values(properties || {})
 			.filter((prop) => prop?.price > min)
 			.filter((prop) => prop?.price < max)
-			.filter((prop) => prop?.type.includes(type))
+			.filter((prop) => !type || prop?.type?.includes(type))
 			.filter((prop) => {
-				if (bed === 0) {
-					return prop;
-				} else if (bed === 4) {
-					return prop?.bed >= 4;
-				} else {
-					return prop?.bed === bed;
-				}
+				if (bed === 0) return true;
+				if (bed === 4) return prop?.bed >= 4;
+				return prop?.bed === bed;
 			})
 			.filter((prop) => {
-				if (bath === 0) {
-					return prop;
-				} else if (bath === 4) {
-					return prop?.bath >= 4;
-				} else {
-					return prop?.bath === bath || prop?.bath - 0.5 === bath;
-				}
+				if (bath === 0) return true;
+				if (bath === 4) return prop?.bath >= 4;
+				return prop?.bath === bath || prop?.bath - 0.5 === bath;
 			});
 		setPropArr(arr);
 	}, [min, max, type, bed, bath, properties]);
 
 	useEffect(() => {
 		return () => {
-			if (mapSyncTimer.current) {
-				clearTimeout(mapSyncTimer.current);
-			}
+			if (mapSyncTimer.current) clearTimeout(mapSyncTimer.current);
 		};
 	}, []);
 
-	const handleMapBoundsChange = (bounds) => {
+	// useCallback keeps the reference stable so MyMap doesn't re-register its
+	// onIdle listener on every render — that re-registration was the infinite loop.
+	// setIsMapSyncing(true) is inside the timeout, not before it, to avoid a
+	// synchronous state update that would trigger an extra render before fetch.
+	const handleMapBoundsChange = useCallback((bounds) => {
 		if (!bounds) return;
-		if (mapSyncTimer.current) {
-			clearTimeout(mapSyncTimer.current);
-		}
-		setIsMapSyncing(true);
+		if (mapSyncTimer.current) clearTimeout(mapSyncTimer.current);
 		mapSyncTimer.current = setTimeout(async () => {
+			setIsMapSyncing(true);
 			await dispatch(propertyActions.areaProperties(bounds));
 			setIsMapSyncing(false);
-		}, 220);
-	};
+		}, 500);
+	}, [dispatch]);
 
 	const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 	const googleMapURL = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.exp&libraries=geometry,drawing,places`;

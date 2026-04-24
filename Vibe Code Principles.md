@@ -80,3 +80,5 @@ Claude 是高级外包： 你不需要替它写代码，但你要验收它的代
 不要为了追求高大上而引入太多的技术。Repliers + Supabase + Next.js 已经是黄金组合了。不要再去搞什么微服务、多级缓存，简单就是生命线。
 
 connect posgergsql to repliers with adapter in middle
+
+![alt text](image-6.png)

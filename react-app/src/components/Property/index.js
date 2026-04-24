@@ -21,7 +21,9 @@ const Property = ({ property, onClose }) => {
 
 	useEffect(() => {
 		dispatch(propertyImgActions.getAllImages(property.id));
-		dispatch(agentActions.getThisAgent(property.listing_agent_id));
+		if (property.listing_agent_id != null) {
+			dispatch(agentActions.getThisAgent(property.listing_agent_id));
+		}
 	}, [property, dispatch]);
 
 	return (

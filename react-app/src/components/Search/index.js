@@ -7,17 +7,22 @@ import MyMap from "./Map";
 
 import * as propertyActions from "../../store/property";
 
+const normalizeProperties = (source) => {
+	if (Array.isArray(source)) return source.filter(Boolean);
+	return Object.values(source || {}).filter(Boolean);
+};
+
 const Search = () => {
 	const dispatch = useDispatch();
 	const searchParam = useParams().searchParam;
-	const properties = useSelector((state) => state.properties);
+	const properties = useSelector((state) => state.properties?.properties ?? []);
 
 	const [min, setMin] = useState(0);
 	const [max, setMax] = useState(99999999999);
 	const [type, setType] = useState("");
 	const [bed, setBed] = useState(0);
 	const [bath, setBath] = useState(0);
-	const [center, setCenter] = useState({ lat: 43.6629, lng: -79.3957 });
+	const [center, setCenter] = useState({ lat: 35.2271, lng: -80.8431 }); // Charlotte — highest MLS data density
 	const [propArr, setPropArr] = useState([]);
 	const [over, setOver] = useState({ id: 0 });
 	const [isMapSyncing, setIsMapSyncing] = useState(false);
@@ -38,10 +43,10 @@ const Search = () => {
 	}, []);
 
 	useEffect(() => {
-		let arr = Object.values(properties)
-			.filter((prop) => prop?.price > min)
-			.filter((prop) => prop?.price < max)
-			.filter((prop) => prop?.type.includes(type))
+		const arr = normalizeProperties(properties)
+			.filter((prop) => Number(prop?.price) > min)
+			.filter((prop) => Number(prop?.price) < max)
+			.filter((prop) => !type || prop?.type?.includes(type))
 			.filter((prop) => {
 				if (bed === 0) {
 					return prop;
