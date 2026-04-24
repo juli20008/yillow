@@ -58,11 +58,22 @@
 | **P3 (维护)**   | **Vercel/Cloudfront** | 优化加载速度和图片分发。                         |
 
 
-💡 几个让 Claude Code 执行更顺滑的技巧：
-提供 API 结构： 如果你有 Repliers 的 JSON 示例，直接贴给 Claude。它会根据 JSON 自动推断该怎么写 map 函数。
-
-启用 PostGIS： 既然你在做 Yollow 的地图功能，告诉 Claude："Since Yollow is a mapping app, please enable the PostGIS extension in the Supabase migration script to handle spatial queries faster."
-
-利用它的终端权限： Claude Code 可以帮你运行 curl 来测试 Repliers API 是否连通。你可以说："Run a curl command to test the Repliers API connection before writing any code."
 
 PWA -> webapp
+
+
+Claude, look at this screenshot. 
+C:\Users\Hrana\OneDrive\MiaSoft\yillow\image-9.png
+  I've implemented the new top-gallery layout, but I'm seeing a weird pattern: two images load correctly, and two are blank (white space).
+
+Based on the Console logs, it seems like the ImageResolver is processing many URLs, but some might be failing or returning empty.
+
+Please check PropertyTop.js and the image rendering logic for these 3 things:
+
+URL Validation: Are some of the image URLs in my mock data/Repliers API returning 404 or empty strings? Add a fallback image (placeholder) if the URL is invalid.
+
+Grid Layout CSS: Is the CSS grid/flexbox forcing a height for empty containers? If an image fails to load, the whole slot shouldn't just be a white block.
+
+Loading State: Are we trying to render the images before the GET_IMAGES action (seen in Redux logs) has fully populated the state?
+
+Task: Fix the image gallery so that it only renders valid images, and ensure there are no 'ghost' white boxes when an image is missing or loading.
