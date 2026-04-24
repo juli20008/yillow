@@ -169,9 +169,9 @@ const List = ({
 			{propArr.length ? (
 				<>
 					<div className="search-list grid flex-1 grid-cols-1 gap-3 overflow-y-auto px-4 py-3 lg:grid-cols-2">
-						{pagedProperties?.map((property, idx) => (
+						{pagedProperties?.map((property, index) => (
 							<PropertyCard
-								key={property.id || "property" + idx}
+								key={`${property.id}-${index}`}
 								property={property}
 								setOver={setOver}
 							/>

@@ -16,14 +16,14 @@ import Footer from "./Footer";
 const Splash = () => {
 	const history = useHistory();
 	const defaultGtaArea =
-		"/area/neLat=35.40&neLng=-80.60&swLat=35.05&swLng=-81.05&zoom=10";
+		"/area/neLat=44.20&neLng=-78.90&swLat=43.30&swLng=-80.80&zoom=10";
 	const gtaAreaPayload = {
-		neLat: 35.40,
-		neLng: -80.60,
-		swLat: 35.05,
-		swLng: -81.05,
+		neLat: 44.20,
+		neLng: -78.90,
+		swLat: 43.30,
+		swLng: -80.80,
 	};
-	const gtaCenter = { lat: 35.2271, lng: -80.8431 }; // Charlotte — highest MLS density
+	const gtaCenter = { lat: 43.7417, lng: -79.3733 }; // Toronto GTA
 
 	const [search, setSearch] = useState("");
 	const [searchList, setSearchList] = useState([]);

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
@@ -6,11 +6,6 @@ import List from "./List";
 import MyMap from "./Map";
 
 import * as propertyActions from "../../store/property";
-
-const normalizeProperties = (source) => {
-	if (Array.isArray(source)) return source.filter(Boolean);
-	return Object.values(source || {}).filter(Boolean);
-};
 
 const Search = () => {
 	const dispatch = useDispatch();
@@ -22,7 +17,7 @@ const Search = () => {
 	const [type, setType] = useState("");
 	const [bed, setBed] = useState(0);
 	const [bath, setBath] = useState(0);
-	const [center, setCenter] = useState({ lat: 35.2271, lng: -80.8431 }); // Charlotte — highest MLS data density
+	const [center] = useState({ lat: 43.7417, lng: -79.3733 }); // Toronto GTA
 	const [propArr, setPropArr] = useState([]);
 	const [over, setOver] = useState({ id: 0 });
 	const [isMapSyncing, setIsMapSyncing] = useState(false);
@@ -35,7 +30,6 @@ const Search = () => {
 	useEffect(() => {
 		document.documentElement.classList.add("search-page-lock");
 		document.body.classList.add("search-page-lock");
-
 		return () => {
 			document.documentElement.classList.remove("search-page-lock");
 			document.body.classList.remove("search-page-lock");
@@ -43,51 +37,38 @@ const Search = () => {
 	}, []);
 
 	useEffect(() => {
-		const arr = normalizeProperties(properties)
-			.filter((prop) => Number(prop?.price) > min)
-			.filter((prop) => Number(prop?.price) < max)
+		const arr = (Array.isArray(properties) ? properties : [])
+			.filter((prop) => prop?.price > min)
+			.filter((prop) => prop?.price < max)
 			.filter((prop) => !type || prop?.type?.includes(type))
 			.filter((prop) => {
-				if (bed === 0) {
-					return prop;
-				} else if (bed === 4) {
-					return prop?.bed >= 4;
-				} else {
-					return prop?.bed === bed;
-				}
+				if (bed === 0) return true;
+				if (bed === 4) return prop?.bed >= 4;
+				return prop?.bed === bed;
 			})
 			.filter((prop) => {
-				if (bath === 0) {
-					return prop;
-				} else if (bath === 4) {
-					return prop?.bath >= 4;
-				} else {
-					return prop?.bath === bath || prop?.bath - 0.5 === bath;
-				}
+				if (bath === 0) return true;
+				if (bath === 4) return prop?.bath >= 4;
+				return prop?.bath === bath || prop?.bath - 0.5 === bath;
 			});
 		setPropArr(arr);
 	}, [min, max, type, bed, bath, properties]);
 
 	useEffect(() => {
 		return () => {
-			if (mapSyncTimer.current) {
-				clearTimeout(mapSyncTimer.current);
-			}
+			if (mapSyncTimer.current) clearTimeout(mapSyncTimer.current);
 		};
 	}, []);
 
-	const handleMapBoundsChange = (bounds) => {
+	const handleMapBoundsChange = useCallback((bounds) => {
 		if (!bounds) return;
-		if (mapSyncTimer.current) {
-			clearTimeout(mapSyncTimer.current);
-		}
-
-		setIsMapSyncing(true);
+		if (mapSyncTimer.current) clearTimeout(mapSyncTimer.current);
 		mapSyncTimer.current = setTimeout(async () => {
+			setIsMapSyncing(true);
 			await dispatch(propertyActions.areaProperties(bounds));
 			setIsMapSyncing(false);
-		}, 220);
-	};
+		}, 500);
+	}, [dispatch]);
 
 	const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 	const googleMapURL = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.exp&libraries=geometry,drawing,places`;

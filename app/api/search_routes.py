@@ -22,18 +22,6 @@ def search_by_area():
     sw_lat = float(request.json["swLat"])
     sw_lng = float(request.json["swLng"])
 
-    # Seeded properties (small set, always include)
-    props = (
-        Property.query.options(*_PROPERTY_OPTS)
-        .filter(
-            Property.lat < ne_lat, Property.long < ne_lng,
-            Property.lat > sw_lat, Property.long > sw_lng,
-        )
-        .limit(PROP_LIMIT)
-        .all()
-    )
-    results = [p.to_dict() for p in props]
-
     # MLS listings within the same bounding box
     mls = (
         MlsListing.query
@@ -45,7 +33,8 @@ def search_by_area():
         .limit(MLS_LIMIT)
         .all()
     )
-    results.extend(l.to_frontend_dict() for l in mls)
+
+    results = [l.to_frontend_dict() for l in mls]
 
     return {"properties": results}
 
@@ -54,43 +43,10 @@ def search_by_area():
 def search_by_term(term):
     parsed = " ".join(term.split("-"))
 
-    # --- Seeded properties (exact street match first) ---
-    exact = (
-        Property.query.options(*_PROPERTY_OPTS)
-        .filter(Property.street.ilike(parsed))
-        .limit(PROP_LIMIT)
-        .all()
-    )
-    if exact:
-        results = [p.to_dict() for p in exact]
-        results.extend(_mls_by_term(parsed))
-        return {"properties": results}
-
-    results = []
-
-    prop_street = (
-        Property.query.options(*_PROPERTY_OPTS)
-        .filter(Property.street.ilike(f"%{parsed}%"))
-        .limit(PROP_LIMIT).all()
-    )
-    results.extend(p.to_dict() for p in prop_street)
-
-    prop_city = (
-        Property.query.options(*_PROPERTY_OPTS)
-        .filter(Property.city.ilike(f"%{parsed}%"))
-        .limit(PROP_LIMIT).all()
-    )
-    results.extend(p.to_dict() for p in prop_city)
-
-    prop_zip = (
-        Property.query.options(*_PROPERTY_OPTS)
-        .filter(Property.zip.ilike(f"%{parsed}%"))
-        .limit(PROP_LIMIT).all()
-    )
-    results.extend(p.to_dict() for p in prop_zip)
-
-    # --- MLS listings ---
-    results.extend(_mls_by_term(parsed))
+    # Prefer MLS listings so the frontend renders the unique Supabase images.
+    results = _mls_by_term(parsed)
+    if not results:
+        results = []
 
     return {"properties": results}
 

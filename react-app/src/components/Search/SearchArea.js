@@ -12,7 +12,7 @@ const SearchArea = () => {
 	const { areaParam } = useParams();
 
 	// state.properties is a flat { [id]: property } object — do NOT chain .properties
-	const properties = useSelector((state) => state.properties);
+	const properties = useSelector((state) => state.properties?.properties ?? []);
 
 	const [min, setMin] = useState(0);
 	const [max, setMax] = useState(99999999999);
@@ -55,7 +55,7 @@ const SearchArea = () => {
 	}, []);
 
 	useEffect(() => {
-		const arr = Object.values(properties || {})
+		const arr = (Array.isArray(properties) ? properties : [])
 			.filter((prop) => prop?.price > min)
 			.filter((prop) => prop?.price < max)
 			.filter((prop) => !type || prop?.type?.includes(type))

@@ -71,21 +71,40 @@ export const getThisProperty = (property_id) => async (dispatch) => {
 };
 
 // Reducer
-// State shape: flat object keyed by property id — { 'mls_123': {...}, 42: {...}, ... }
-const initialState = {};
+// State shape:
+// {
+//   properties: [...],
+//   [id]: property,
+// }
+const initialState = { properties: [] };
+
+const buildState = (items) => {
+	const next = { properties: items };
+	items.forEach((p) => {
+		if (p?.id != null) next[p.id] = p;
+	});
+	return next;
+};
 
 export default function reducer(state = initialState, action) {
 	switch (action.type) {
 		case GET_PROPERTIES: {
 			const items = Array.isArray(action.properties) ? action.properties : [];
 			console.log("[GET_PROPERTIES] reducer received", items.length, "items");
-			const next = {};
-			items.forEach((p) => { if (p?.id != null) next[p.id] = p; });
-			return next;
+			return buildState(items);
 		}
 		case GET_PROPERTY: {
 			if (!action.property?.id) return state;
-			return { ...state, [action.property.id]: action.property };
+			const items = Array.isArray(state.properties) ? [...state.properties] : [];
+			const index = items.findIndex((item) => item?.id === action.property.id);
+			if (index >= 0) {
+				items[index] = action.property;
+			} else {
+				items.push(action.property);
+			}
+			return {
+				...buildState(items),
+			};
 		}
 		default:
 			return state;

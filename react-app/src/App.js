@@ -23,7 +23,7 @@ function App() {
 	const [loaded, setLoaded] = useState(false);
 	const dispatch = useDispatch();
 	const defaultArea =
-		"/area/neLat=35.40&neLng=-80.60&swLat=35.05&swLng=-81.05&zoom=10"; // Charlotte — highest MLS density
+		"/area/neLat=44.20&neLng=-78.90&swLat=43.30&swLng=-80.80&zoom=10"; // Toronto GTA
 
 	useEffect(() => {
 		(async () => {

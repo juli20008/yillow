@@ -1,22 +1,35 @@
 import { useState } from "react";
+
 import { Modal } from "../../../context/Modal";
+import { resolveUrl, FALLBACK_IMAGE } from "../../../utils/imageResolver";
 
 const Image = ({ image }) => {
 	const [showModal, setShowModal] = useState(false);
+	const imageUrl = resolveUrl(image?.img_url) || FALLBACK_IMAGE;
+
 	return (
 		<>
-			<div
+			<img
 				className="property-img"
-				style={{ backgroundImage: `url("${image?.img_url}")` }}
+				src={imageUrl}
+				alt="Gallery"
 				onClick={() => setShowModal(true)}
-			></div>
+				onError={(e) => {
+					e.currentTarget.onerror = null;
+					e.currentTarget.src = FALLBACK_IMAGE;
+				}}
+			/>
 			{showModal && (
 				<Modal onClose={() => setShowModal(false)}>
 					<img
 						className="property-img-lg"
-						src={image?.img_url}
-						alt="image"
+						src={imageUrl}
+						alt="Gallery"
 						onClick={() => setShowModal(false)}
+						onError={(e) => {
+							e.currentTarget.onerror = null;
+							e.currentTarget.src = FALLBACK_IMAGE;
+						}}
 					/>
 				</Modal>
 			)}

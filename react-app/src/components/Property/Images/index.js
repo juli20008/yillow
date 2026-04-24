@@ -1,46 +1,83 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
-
+import { useState, useEffect } from "react";
 import { Modal } from "../../../context/Modal";
-
-import Image from "./Image";
 import LastImage from "./LastImg";
+import {
+	resolvePropertyImage,
+	resolveUrl,
+	FALLBACK_IMAGE,
+} from "../../../utils/imageResolver";
 
-const Images = ({ property, openTour }) => {
-	const images = useSelector((state) => state.images);
-
+const GalleryTile = ({ url }) => {
+	const [src, setSrc] = useState(url);
+	useEffect(() => { setSrc(url); }, [url]);
 	const [showModal, setShowModal] = useState(false);
-
 	return (
-		<div className="property-imgs-ctrl">
-			{property?.front_img && (
-				<div
-					className="property-front"
-					style={{ backgroundImage: `url("${property?.front_img}")` }}
-					onClick={() => setShowModal(true)}
-				></div>
-			)}
+		<>
+			<img
+				className="property-img"
+				src={src}
+				alt="Gallery"
+				onClick={() => setShowModal(true)}
+				onError={() => setSrc(FALLBACK_IMAGE)}
+			/>
 			{showModal && (
 				<Modal onClose={() => setShowModal(false)}>
 					<img
 						className="property-img-lg"
-						src={property?.front_img}
-						alt="Front"
+						src={src}
+						alt="Gallery"
 						onClick={() => setShowModal(false)}
+						onError={() => setSrc(FALLBACK_IMAGE)}
+					/>
+				</Modal>
+			)}
+		</>
+	);
+};
+
+const Images = ({ property, openTour }) => {
+	const [heroSrc, setHeroSrc] = useState(() => resolvePropertyImage(property));
+	useEffect(() => {
+		setHeroSrc(resolvePropertyImage(property));
+	}, [property]);
+
+	const [showHeroModal, setShowHeroModal] = useState(false);
+
+	// Build gallery directly from property.image_urls — no async Redux dependency.
+	// Each relative path (e.g. "sample/IMG-xxx.jpg") is resolved to a CDN URL.
+	const galleryUrls = (property?.image_urls || [])
+		.map(resolveUrl)
+		.filter(Boolean);
+
+	const oddGallery = galleryUrls.length % 2 !== 0;
+
+	return (
+		<div className="property-imgs-ctrl">
+			<img
+				className="property-front"
+				src={heroSrc}
+				alt="Front"
+				onClick={() => setShowHeroModal(true)}
+				onError={() => setHeroSrc(FALLBACK_IMAGE)}
+			/>
+			{showHeroModal && (
+				<Modal onClose={() => setShowHeroModal(false)}>
+					<img
+						className="property-img-lg"
+						src={heroSrc}
+						alt="Front"
+						onClick={() => setShowHeroModal(false)}
+						onError={() => setHeroSrc(FALLBACK_IMAGE)}
 					/>
 				</Modal>
 			)}
 			<div className="property-imgs-wrap">
-				{Object.values(images).map((image, idx) => (
-					<Image key={"img" + idx} image={image} />
+				{galleryUrls.map((url, idx) => (
+					<GalleryTile key={url + idx} url={url} />
 				))}
-				{Object.keys(images).length % 2 !== 0 && (
-					<LastImage openTour={openTour} />
-				)}
+				{oddGallery && <LastImage openTour={openTour} />}
 			</div>
-			{Object.keys(images).length % 2 === 0 && (
-				<LastImage openTour={openTour} />
-			)}
+			{!oddGallery && <LastImage openTour={openTour} />}
 		</div>
 	);
 };
