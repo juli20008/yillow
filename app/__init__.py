@@ -15,8 +15,10 @@ from .api.review_routes import review_routes
 from .api.search_routes import search_routes
 from .api.service_area_routes import service_area_routes
 from .api.channel_routes import channel_routes
+from .api.mls_agent_routes import mls_agent_routes
 
 from .seeds import seed_commands
+from .commands import repliers_commands
 
 from .config import Config
 
@@ -44,6 +46,8 @@ app.register_blueprint(review_routes, url_prefix='/api/reviews')
 app.register_blueprint(search_routes, url_prefix='/api/search')
 app.register_blueprint(service_area_routes, url_prefix='/api/service_areas')
 app.register_blueprint(channel_routes, url_prefix='/api/channels')
+app.register_blueprint(mls_agent_routes, url_prefix='/api/mls-agents')
+app.cli.add_command(repliers_commands)
 db.init_app(app)
 Migrate(app, db)
 socketio.init_app(app)
