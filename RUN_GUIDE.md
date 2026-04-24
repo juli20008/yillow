@@ -20,10 +20,24 @@ venv_yillow\Scripts\Activate.ps1
 
 ## **Step 2: Install / Sync Dependencies**
 
-Run this once after pulling new changes (psycopg2-binary and requests were added):
+Run this once after pulling new changes.
+
+If `pipenv` is installed, use it:
 
 ```powershell
 pipenv install
+```
+
+If `pipenv` is not installed, use the active virtual environment instead:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+If you need to install `pipenv` first:
+
+```powershell
+python -m pip install pipenv
 ```
 
 ---

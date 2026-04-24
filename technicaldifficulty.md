@@ -58,36 +58,10 @@
 | **P3 (维护)**   | **Vercel/Cloudfront** | 优化加载速度和图片分发。                         |
 
 
-Now: 
-Role: 你现在是一位资深的 Full-stack Engineer，擅长处理复杂的数据库迁移。
+💡 几个让 Claude Code 执行更顺滑的技巧：
+提供 API 结构： 如果你有 Repliers 的 JSON 示例，直接贴给 Claude。它会根据 JSON 自动推断该怎么写 map 函数。
 
-Task: 我要将 Yollow 项目的数据库从目前的 SQLite 迁移到 Supabase (PostgreSQL)，并对接 Repliers API。
+启用 PostGIS： 既然你在做 Yollow 的地图功能，告诉 Claude："Since Yollow is a mapping app, please enable the PostGIS extension in the Supabase migration script to handle spatial queries faster."
 
-1. 环境变量与连接:
-
-我已经在 Supabase 准备好了项目，请帮我在 .env 文件中配置 DATABASE_URL (我会稍后贴给你) 和 SUPABASE_SERVICE_ROLE_KEY。
-
-检查现有的数据库模型文件（如 schema.prisma 或 Python 的 models.py），并将其数据库提供商 (provider) 从 sqlite 修改为 postgresql。
-
-2. 数据库迁移 (Migration):
-
-扫描现有的 SQLite 表结构，在 Supabase 中生成对应的迁移脚本并执行。
-
-重点优化：由于我们要存储 7 万多名经纪人的数据，请在 Agent 表的 name, license_id, city 等字段上添加索引。
-
-3. 对接 Repliers API:
-
-请查看项目中连接 Repliers API 的逻辑（或根据我的 API Key 创建新的逻辑）。
-
-核心逻辑： 编写一个同步函数，从 Repliers 获取数据后，使用 UPSERT 方式存入 Supabase（以防止重复数据）。
-
-地理空间： 考虑到地图功能，确保经纬度数据存储为 PostgreSQL 能够高效查询的格式。
-
-4. 代码清理:
-
-移除项目中所有对 SQLite 的本地文件依赖。
-
-确保所有读取数据的接口（API Routes）现在都指向新的 Supabase 客户端。
-
-现在请先列出你需要我提供的具体信息（如 Connection String, API Key 等），并扫描我的项目文件结构。
+利用它的终端权限： Claude Code 可以帮你运行 curl 来测试 Repliers API 是否连通。你可以说："Run a curl command to test the Repliers API connection before writing any code."
 

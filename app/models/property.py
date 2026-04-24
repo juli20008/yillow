@@ -9,7 +9,7 @@ class Property(db.Model):
     street = db.Column(db.String(255),nullable=False)
     city = db.Column(db.String(255),nullable=False)
     state_id = db.Column(db.Integer, db.ForeignKey("states.id"), nullable=False)
-    zip = db.Column(db.String(5), nullable=False)
+    zip = db.Column(db.String(10), nullable=False)
     type = db.Column(db.String(20), nullable=False)
     price = db.Column(db.Integer, nullable=False)
     bed = db.Column(db.Integer, nullable=False)

@@ -2,7 +2,7 @@ from flask.cli import AppGroup
 from .users import seed_users, undo_users
 from .states import seed_states, undo_states
 from .properties import seed_properties, undo_properties
-from .property_imgs import seed_property_imgs, undo_property_imgs
+from .property_imgs_dynamic import seed_property_imgs, undo_property_imgs
 from .reviews import seed_reviews, undo_reviews
 from .appointments import seed_appointments, undo_appointments
 from .agent_availability import seed_agent_availability, undo_agent_availability

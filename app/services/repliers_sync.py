@@ -1,5 +1,4 @@
 import time
-import requests
 from datetime import datetime
 from flask import current_app
 from sqlalchemy.dialects.postgresql import insert as pg_insert
@@ -21,6 +20,13 @@ def _get_headers():
 
 
 def _fetch_page(page_num, results_per_page=BATCH_SIZE):
+    try:
+        import requests
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            "The optional Repliers sync feature requires the 'requests' package."
+        ) from exc
+
     url = f'{REPLIERS_BASE_URL}/members'
     params = {'pageNum': page_num, 'resultsPerPage': results_per_page}
     resp = requests.get(url, headers=_get_headers(), params=params, timeout=30)
