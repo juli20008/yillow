@@ -1,3 +1,4 @@
+import apiFetch from "../../../utils/apiFetch";
 import { useEffect, useMemo, useState } from "react";
 
 const DAY_NAMES = [
@@ -57,7 +58,7 @@ const Availability = () => {
 	useEffect(() => {
 		(async () => {
 			try {
-				const response = await fetch("/api/agents/me/availability");
+				const response = await apiFetch("/api/agents/me/availability");
 				const data = await response.json();
 
 				if (response.ok && Array.isArray(data.availability)) {
@@ -98,7 +99,7 @@ const Availability = () => {
 		};
 
 		try {
-			const response = await fetch("/api/agents/me/availability", {
+			const response = await apiFetch("/api/agents/me/availability", {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",

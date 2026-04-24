@@ -1,3 +1,4 @@
+import apiFetch from "../utils/apiFetch";
 // Actions
 const GET_APPOINTMENTS = "appointments/GET_APPOINTMENTS";
 const ADD_EDIT_APPOINTMENT = "appointments/ADD_EDIT_APPOINTMENT";
@@ -36,7 +37,7 @@ const parseErrorResponse = async (response) => {
 
 // Thunks
 export const getAllAppointments = () => async (dispatch) => {
-	const response = await fetch("/api/appointments/");
+	const response = await apiFetch("/api/appointments/");
 	if (response.ok) {
 		const data = await response.json();
 		dispatch(getAppointments(data.appointments));
@@ -48,7 +49,7 @@ export const getAllAppointments = () => async (dispatch) => {
 
 export const addAppointment = (appointment) => async (dispatch) => {
 	try {
-		const response = await fetch("/api/appointments/", {
+		const response = await apiFetch("/api/appointments/", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -73,7 +74,7 @@ export const addAppointment = (appointment) => async (dispatch) => {
 
 export const editAppointment = (appointment) => async (dispatch) => {
 	try {
-		const response = await fetch(`/api/appointments/${appointment.id}`, {
+		const response = await apiFetch(`/api/appointments/${appointment.id}`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
@@ -98,7 +99,7 @@ export const editAppointment = (appointment) => async (dispatch) => {
 
 export const deleteThisAppointment = (appointmentId) => async (dispatch) => {
 	try {
-		const response = await fetch(`/api/appointments/${appointmentId}`, {
+		const response = await apiFetch(`/api/appointments/${appointmentId}`, {
 			method: "DELETE",
 		});
 		if (response.ok) {
@@ -119,7 +120,7 @@ export const assignAppointmentAgent = (appointmentId, agentId) => async (
 	dispatch
 ) => {
 	try {
-		const response = await fetch(`/api/appointments/${appointmentId}/assign`, {
+		const response = await apiFetch(`/api/appointments/${appointmentId}/assign`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",

@@ -1,3 +1,4 @@
+import apiFetch from "../../utils/apiFetch";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -18,7 +19,7 @@ const Chats = () => {
 
 	useEffect(() => {
 		// fetch to get channels and chats
-		fetch("/api/channels/")
+		apiFetch("/api/channels/")
 			.then((res) => res.json())
 			.then((res) => {
 				dispatch(channelActions.getChannels(res.channels));

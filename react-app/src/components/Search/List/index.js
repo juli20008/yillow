@@ -1,3 +1,4 @@
+import apiFetch from "../../../utils/apiFetch";
 import { useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 
@@ -62,7 +63,7 @@ const List = ({
 	};
 
 	useEffect(() => {
-		fetch("/api/search/terms")
+		apiFetch("/api/search/terms")
 			.then((res) => res.json())
 			.then((res) => setSearchList(res.terms))
 			.catch((err) => console.log(err));

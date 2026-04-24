@@ -1,3 +1,4 @@
+import apiFetch from "../utils/apiFetch";
 // Actions
 const GET_CHANNELS = "channels/GET_CHANNELS";
 const ADD_CHANNEL = "channels/ADD_CHANNEL";
@@ -35,7 +36,7 @@ export const deleteChat = (payload) => {
 
 // Thunks
 export const addThisChannel = (channel) => async (dispatch) => {
-	const response = await fetch("/api/channels/", {
+	const response = await apiFetch("/api/channels/", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(channel),

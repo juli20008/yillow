@@ -1,3 +1,4 @@
+import apiFetch from "../../utils/apiFetch";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import {
@@ -58,14 +59,14 @@ const Splash = () => {
 	};
 
 	useEffect(() => {
-		fetch("/api/search/terms")
+		apiFetch("/api/search/terms")
 			.then((res) => res.json())
 			.then((res) => setSearchList(res.terms))
 			.catch((err) => console.log(err));
 	}, []);
 
 	useEffect(() => {
-		fetch("/api/search/areas", {
+		apiFetch("/api/search/areas", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

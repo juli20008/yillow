@@ -1,3 +1,4 @@
+import apiFetch from "../utils/apiFetch";
 // constants
 const SET_USER = "session/SET_USER";
 const REMOVE_USER = "session/REMOVE_USER";
@@ -26,7 +27,7 @@ const removeUser = () => ({
 
 // Thunks
 export const authenticate = () => async (dispatch) => {
-	const response = await fetch("/api/auth/", {
+	const response = await apiFetch("/api/auth/", {
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -42,7 +43,7 @@ export const authenticate = () => async (dispatch) => {
 };
 
 export const login = (email, password) => async (dispatch) => {
-	const response = await fetch("/api/auth/login", {
+	const response = await apiFetch("/api/auth/login", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -68,7 +69,7 @@ export const login = (email, password) => async (dispatch) => {
 };
 
 export const logout = () => async (dispatch) => {
-	const response = await fetch("/api/auth/logout", {
+	const response = await apiFetch("/api/auth/logout", {
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -81,7 +82,7 @@ export const logout = () => async (dispatch) => {
 
 export const signUp =
 	(username, email, password, agent) => async (dispatch) => {
-		const response = await fetch("/api/auth/signup", {
+		const response = await apiFetch("/api/auth/signup", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -109,7 +110,7 @@ export const signUp =
 	};
 
 export const updateThisUser = (user) => async (dispatch) => {
-	const response = await fetch("/api/auth/", {
+	const response = await apiFetch("/api/auth/", {
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
@@ -132,7 +133,7 @@ export const updateThisUser = (user) => async (dispatch) => {
 };
 
 export const addServiceArea = (zip) => async (dispatch) => {
-	const response = await fetch("/api/service_areas/", {
+	const response = await apiFetch("/api/service_areas/", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -153,7 +154,7 @@ export const addServiceArea = (zip) => async (dispatch) => {
 };
 
 export const removeServiceArea = (zip) => async (dispatch) => {
-	const response = await fetch(`/api/service_areas/${zip}`, {
+	const response = await apiFetch(`/api/service_areas/${zip}`, {
 		method: "DELETE",
 	});
 	const data = await response.json();

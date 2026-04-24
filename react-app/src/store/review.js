@@ -1,3 +1,4 @@
+import apiFetch from "../utils/apiFetch";
 // Actions
 const GET_REVIEWS = "reviews/GET_REVIEWS";
 const ADD_EDIT_REVIEW = "reviews/ADD_EDIT_REVIEW";
@@ -27,7 +28,7 @@ const deleteReview = (reviewId) => {
 
 // Thunks
 export const getAllReviews = (agentId) => async (dispatch) => {
-	const response = await fetch(`/api/agents/${agentId}/reviews`);
+	const response = await apiFetch(`/api/agents/${agentId}/reviews`);
 	const data = await response.json();
 	if (response.ok) {
 		if (data.errors) {
@@ -43,7 +44,7 @@ export const getAllReviews = (agentId) => async (dispatch) => {
 };
 
 export const addReview = (review) => async (dispatch) => {
-	const response = await fetch("/api/reviews/", {
+	const response = await apiFetch("/api/reviews/", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -65,7 +66,7 @@ export const addReview = (review) => async (dispatch) => {
 };
 
 export const editReview = (review) => async (dispatch) => {
-	const response = await fetch(`/api/reviews/${review.id}`, {
+	const response = await apiFetch(`/api/reviews/${review.id}`, {
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
@@ -87,7 +88,7 @@ export const editReview = (review) => async (dispatch) => {
 };
 
 export const deleteThisReview = (reviewId) => async (dispatch) => {
-	const response = await fetch(`/api/reviews/${reviewId}`, {
+	const response = await apiFetch(`/api/reviews/${reviewId}`, {
 		method: "DELETE",
 	});
 	if (response.ok) {

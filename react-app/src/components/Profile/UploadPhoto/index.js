@@ -1,3 +1,4 @@
+import apiFetch from "../../../utils/apiFetch";
 import { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -22,7 +23,7 @@ const UploadPhoto = () => {
 
 		setPhotoLoading(true);
 
-		const res = await fetch("/api/auth/photo", {
+		const res = await apiFetch("/api/auth/photo", {
 			method: "POST",
 			body: formData,
 		});
