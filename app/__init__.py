@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, jsonify
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, generate_csrf
@@ -16,6 +16,7 @@ from .api.search_routes import search_routes
 from .api.service_area_routes import service_area_routes
 from .api.channel_routes import channel_routes
 from .api.mls_agent_routes import mls_agent_routes
+from .api.mls_listing_routes import mls_listing_routes
 
 from .seeds import seed_commands
 from .commands import repliers_commands
@@ -47,6 +48,7 @@ app.register_blueprint(search_routes, url_prefix='/api/search')
 app.register_blueprint(service_area_routes, url_prefix='/api/service_areas')
 app.register_blueprint(channel_routes, url_prefix='/api/channels')
 app.register_blueprint(mls_agent_routes, url_prefix='/api/mls-agents')
+app.register_blueprint(mls_listing_routes, url_prefix='/api/listings')
 app.cli.add_command(repliers_commands)
 db.init_app(app)
 Migrate(app, db)
@@ -87,7 +89,12 @@ def inject_csrf_token(response):
 def react_root(path):
     if path == 'favicon.ico':
         return app.send_static_file('favicon.ico')
-    return app.send_static_file('index.html')
+    if path.startswith('api/'):
+        return jsonify({'error': 'Not found'}), 404
+    try:
+        return app.send_static_file('index.html')
+    except Exception:
+        return jsonify({'error': 'Frontend not built'}), 404
 
 if __name__ == '__main__':
     socketio.run(app)

@@ -11,3 +11,4 @@ from .zip_city import ZipCity
 from .channel import Channel
 from .chat import Chat
 from .mls_agent import MlsAgent
+from .mls_listing import MlsListing

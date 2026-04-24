@@ -1,90 +1,85 @@
 import time
+import requests
 from datetime import datetime
 from flask import current_app
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from ..models.db import db
-from ..models.mls_agent import MlsAgent
+from ..models.mls_listing import MlsListing
+from ..adapters.repliers_adapter import to_standard
+from ..schemas.property_schema import StandardPropertySchema
 
-REPLIERS_BASE_URL = 'https://api.repliers.io'
-BATCH_SIZE = 500
-REQUEST_DELAY = 0.2  # seconds between pages to avoid rate limiting
+REPLIERS_BASE_URL = 'https://csr-api.repliers.io'
+BATCH_SIZE = 100
+REQUEST_DELAY = 0.3
 
 
 def _get_headers():
     api_key = current_app.config.get('REPLIERS_API_KEY')
-    return {
-        'REPLIERS-API-KEY': api_key,
-        'Content-Type': 'application/json',
-    }
+    return {'REPLIERS-API-KEY': api_key}
 
 
 def _fetch_page(page_num, results_per_page=BATCH_SIZE):
-    try:
-        import requests
-    except ModuleNotFoundError as exc:
-        raise RuntimeError(
-            "The optional Repliers sync feature requires the 'requests' package."
-        ) from exc
-
-    url = f'{REPLIERS_BASE_URL}/members'
+    url = f'{REPLIERS_BASE_URL}/listings'
     params = {'pageNum': page_num, 'resultsPerPage': results_per_page}
     resp = requests.get(url, headers=_get_headers(), params=params, timeout=30)
     resp.raise_for_status()
-    return resp.json()
+    data = resp.json()
+    if isinstance(data, list):
+        raise RuntimeError(f'Repliers API error: {data}')
+    return data
 
 
-def _transform(member):
-    first = (member.get('firstName') or member.get('first_name') or '').strip()
-    last = (member.get('lastName') or member.get('last_name') or '').strip()
-    full = (member.get('name') or f'{first} {last}').strip()
-
-    raw_lat = member.get('lat') or member.get('latitude')
-    raw_lng = member.get('lng') or member.get('longitude') or member.get('long')
-
+def _to_db_dict(schema: StandardPropertySchema) -> dict:
+    """Map Yillow's StandardPropertySchema to the mls_listings table row dict."""
     return {
-        'repliers_id': str(member.get('memberId') or member.get('id', '')),
-        'first_name': first[:100] or None,
-        'last_name': last[:100] or None,
-        'full_name': full[:200] or None,
-        'license_id': (str(member.get('licenseNum') or member.get('license_num') or '')
-                       .strip()[:50]) or None,
-        'email': (member.get('email') or '')[:255] or None,
-        'phone': (member.get('phone') or '')[:50] or None,
-        'city': (member.get('city') or '')[:100] or None,
-        'province': (member.get('province') or member.get('state') or '')[:10] or None,
-        'office': (member.get('brokerName') or member.get('broker_name') or
-                   member.get('office') or '')[:200] or None,
-        'position': (member.get('position') or '')[:100] or None,
-        'photo_url': (member.get('photo') or member.get('photoUrl') or '')[:500] or None,
-        'lat': float(raw_lat) if raw_lat is not None else None,
-        'lng': float(raw_lng) if raw_lng is not None else None,
+        'mls_number': schema.source_id,
+        'status': schema.status,
+        'standard_status': schema.standard_status,
+        'property_class': schema.property_class,
+        'transaction_type': schema.transaction_type,
+        'list_price': schema.list_price,
+        'sold_price': schema.sold_price,
+        'original_price': schema.original_price,
+        'list_date': schema.list_date,
+        'sold_date': schema.sold_date,
+        'last_status': schema.last_status,
+        'street_number': schema.street_number,
+        'street_name': schema.street_name,
+        'street_suffix': schema.street_suffix,
+        'unit_number': schema.unit_number,
+        'city': schema.city,
+        'state': schema.state,
+        'zip': schema.zip_code,
+        'country': schema.country,
+        'neighborhood': schema.neighborhood,
+        'lat': schema.latitude,
+        'lng': schema.longitude,
+        'bed': schema.bedrooms,
+        'bath': schema.bathrooms,
+        'sqft': schema.sqft,
+        'year_built': schema.year_built,
+        'style': schema.style,
+        'property_type': schema.property_type,
+        'description': schema.description,
+        'images': schema.images,
+        'agent_name': schema.agent.name if schema.agent else None,
+        'agent_email': schema.agent.email if schema.agent else None,
+        'brokerage': schema.agent.brokerage if schema.agent else None,
         'updated_at': datetime.utcnow(),
     }
 
 
-def _upsert_batch(batch):
+def _upsert_batch(batch: list[dict]) -> int:
     if not batch:
         return 0
-    stmt = pg_insert(MlsAgent).values(batch)
+    stmt = pg_insert(MlsListing).values(batch)
     stmt = stmt.on_conflict_do_update(
-        index_elements=['repliers_id'],
+        index_elements=['mls_number'],
         set_={
-            'first_name': stmt.excluded.first_name,
-            'last_name': stmt.excluded.last_name,
-            'full_name': stmt.excluded.full_name,
-            'license_id': stmt.excluded.license_id,
-            'email': stmt.excluded.email,
-            'phone': stmt.excluded.phone,
-            'city': stmt.excluded.city,
-            'province': stmt.excluded.province,
-            'office': stmt.excluded.office,
-            'position': stmt.excluded.position,
-            'photo_url': stmt.excluded.photo_url,
-            'lat': stmt.excluded.lat,
-            'lng': stmt.excluded.lng,
-            'updated_at': stmt.excluded.updated_at,
-            # created_at intentionally excluded — preserve original insert time
+            c: getattr(stmt.excluded, c)
+            for c in batch[0].keys()
+            if c != 'mls_number'
         }
     )
     db.session.execute(stmt)
@@ -92,42 +87,48 @@ def _upsert_batch(batch):
     return len(batch)
 
 
-def sync_agents(max_pages=None, verbose=True):
+def sync_listings(max_pages=None, verbose=True):
     """
-    Pull all members from Repliers API and UPSERT into mls_agents.
-    Safe to re-run; duplicate records are updated, not duplicated.
-    Returns the total number of rows processed.
+    Fetch listings from Repliers, adapt through StandardPropertySchema,
+    and UPSERT into mls_listings. Safe to re-run. Returns total rows upserted.
     """
-    probe = _fetch_page(1, results_per_page=1)
-    num_pages = probe.get('numPages', 1)
-    total_records = probe.get('count', 0)
+    first_page = _fetch_page(1, results_per_page=BATCH_SIZE)
+    num_pages = first_page.get('numPages', 1)
+    total_count = first_page.get('count', 0)
 
     if max_pages:
         num_pages = min(num_pages, max_pages)
 
     if verbose:
-        print(f'[repliers] {total_records} agents across {num_pages} pages')
+        print(f'[repliers] {total_count:,} listings, '
+              f'{first_page.get("numPages"):,} total pages at batch={BATCH_SIZE} '
+              f'(syncing {num_pages} pages)')
 
     total_upserted = 0
-    for page in range(1, num_pages + 1):
-        if verbose:
-            print(f'[repliers] page {page}/{num_pages}...', end=' ', flush=True)
 
+    def _process(page, data):
+        raw_listings = data.get('listings') or []
+        batch = [
+            _to_db_dict(to_standard(r))
+            for r in raw_listings
+            if r.get('mlsNumber')
+        ]
+        count = _upsert_batch(batch)
+        if verbose:
+            print(f'[repliers] page {page}/{num_pages}: {count} upserted  '
+                  f'(total: {total_upserted + count})')
+        return count
+
+    total_upserted += _process(1, first_page)
+
+    for page in range(2, num_pages + 1):
+        if verbose:
+            print(f'[repliers] fetching page {page}/{num_pages}...', end=' ', flush=True)
+        time.sleep(REQUEST_DELAY)
         data = _fetch_page(page)
-        members = data.get('results') or data.get('members') or []
-        valid = [_transform(m) for m in members
-                 if (m.get('memberId') or m.get('id'))]
-
-        count = _upsert_batch(valid)
-        total_upserted += count
-
-        if verbose:
-            print(f'{count} upserted (running total: {total_upserted})')
-
-        if page < num_pages:
-            time.sleep(REQUEST_DELAY)
+        total_upserted += _process(page, data)
 
     if verbose:
-        print(f'[repliers] Sync complete — {total_upserted} total rows upserted.')
+        print(f'[repliers] Done — {total_upserted:,} total rows upserted.')
 
     return total_upserted
