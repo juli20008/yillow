@@ -103,5 +103,18 @@ def react_root(path):
     except Exception:
         return jsonify({'error': 'Frontend not built'}), 404
 
+@app.route('/debug-migrate')
+def debug_migrate():
+    secret = request.args.get('secret', '')
+    if secret != os.environ.get('MIGRATE_SECRET', ''):
+        return jsonify({'error': 'Forbidden'}), 403
+    try:
+        from flask_migrate import upgrade
+        upgrade()
+        return jsonify({'status': 'Migration complete'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == '__main__':
     socketio.run(app)
