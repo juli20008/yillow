@@ -315,21 +315,15 @@ const MyMap = withScriptjs(
 								zIndex={props.over.id === marker.id ? 9999 : 0}
 							>
 								{showInfo && (
-									<InfoWindow>
-										<div className="gm-div">
-											<img
-												className="gm-img"
-												src={marker.image_urls?.[0] || marker.front_img}
-												alt="House"
-											/>
-											<div className="gm-desc">
-												<div className="price">${priceLabel(marker.price)}</div>
-												<div>
-													{marker.bed} bd, {marker.bath} ba
-												</div>
-												<div>{marker.sqft} sqft</div>
-											</div>
-										</div>
+									<InfoWindow
+										onCloseClick={() =>
+											setIsOpen({ openInfoWindowMarkerId: 0 })
+										}
+									>
+										<PropertyPreviewList
+											properties={[marker]}
+											onSelect={handlePropertySelect}
+										/>
 									</InfoWindow>
 								)}
 								{showModal.show === marker.id && (
