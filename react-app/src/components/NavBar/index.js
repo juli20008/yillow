@@ -88,8 +88,11 @@ const NavBar = () => {
 						Agent Finder
 					</NavLink>
 				</div>
-				<NavLink to="/" exact={true}>
-					<img src="/Yollow.png" alt="Yollow" />
+				<NavLink to="/" exact={true} className="flex flex-col items-center gap-0.5">
+					<img src="/Yollow.svg" alt="Yollow" />
+					<span className="text-[8px] font-light tracking-widest uppercase text-[#64748b] whitespace-nowrap">
+						Map. Click. Tour.
+					</span>
 				</NavLink>
 				<div className="nav-rt">
 					<button className="btn-font-lt" onClick={() => setShowLogin(true)}>
