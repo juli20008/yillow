@@ -32,6 +32,11 @@
 	display: none !important;
 }
 
+/* Remove the chrome bar (holds hidden close button) that creates blank top space */
+.gm-style .gm-style-iw-chr {
+	display: none !important;
+}
+
 
 /* ── Cluster markers (rendered via OverlayView) ─────────────────────── */
 .cluster-marker {
