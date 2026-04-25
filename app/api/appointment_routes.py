@@ -87,16 +87,9 @@ def add_appointment():
         if not property_id or not date or not time:
             return {"errors": ["property_id, date, and time are required"]}, 400
 
-        # MLS properties (id like "mls_123") are not stored in the DB and
-        # cannot be booked. Catch this before the integer cast crashes Postgres.
-        try:
-            property_id = int(property_id)
-        except (TypeError, ValueError):
-            return {"errors": ["Tour booking is only available for listed properties."]}, 400
-
         property_obj = Property.query.get(property_id)
         if not property_obj:
-            return {"errors": ["Property does not exist"]}, 404
+            return {"errors": ["Property does not exists"]}
 
         if not is_future_datetime(date, time):
             return {"errors": ["Date cannot be prior to current date"]}
