@@ -1,88 +1,83 @@
 import { useState, useEffect } from "react";
 import { Modal } from "../../../context/Modal";
-import LastImage from "./LastImg";
 import {
 	resolvePropertyImage,
 	resolveUrl,
 	FALLBACK_IMAGE,
 } from "../../../utils/imageResolver";
 
-const GalleryTile = ({ url }) => {
-	const [src, setSrc] = useState(url);
-	const [failed, setFailed] = useState(false);
-	useEffect(() => { setSrc(url); setFailed(false); }, [url]);
-	const [showModal, setShowModal] = useState(false);
+const Lightbox = ({ src, onClose }) => (
+	<Modal onClose={onClose}>
+		<img
+			className="property-img-lg"
+			src={src}
+			alt="Gallery"
+			onClick={onClose}
+			onError={(e) => { e.currentTarget.onerror = null; }}
+		/>
+	</Modal>
+);
 
-	if (failed) return null;
+const Images = ({ property }) => {
+	const heroResolved = resolvePropertyImage(property);
+	const [heroSrc, setHeroSrc] = useState(heroResolved);
+	useEffect(() => { setHeroSrc(heroResolved); }, [heroResolved]);
 
-	return (
-		<>
-			<img
-				className="property-img"
-				src={src}
-				alt="Gallery"
-				onClick={() => setShowModal(true)}
-				onError={() => setFailed(true)}
-			/>
-			{showModal && (
-				<Modal onClose={() => setShowModal(false)}>
-					<img
-						className="property-img-lg"
-						src={src}
-						alt="Gallery"
-						onClick={() => setShowModal(false)}
-						onError={() => setShowModal(false)}
-					/>
-				</Modal>
-			)}
-		</>
-	);
-};
+	const [lightbox, setLightbox] = useState(null);
 
-const Images = ({ property, openTour }) => {
-	const [heroSrc, setHeroSrc] = useState(() => resolvePropertyImage(property));
-	useEffect(() => {
-		setHeroSrc(resolvePropertyImage(property));
-	}, [property]);
-
-	const [showHeroModal, setShowHeroModal] = useState(false);
-
-	// Build gallery directly from property.image_urls — no async Redux dependency.
-	// Each relative path (e.g. "sample/IMG-xxx.jpg") is resolved to a CDN URL.
-	const galleryUrls = (property?.image_urls || [])
+	const thumbUrls = (property?.image_urls || [])
 		.map(resolveUrl)
 		.filter(Boolean);
 
-	const oddGallery = galleryUrls.length % 2 !== 0;
-
 	return (
-		<div className="property-imgs-ctrl">
-			<img
-				className="property-front"
-				src={heroSrc}
-				alt="Front"
-				onClick={() => setShowHeroModal(true)}
-				onError={() => setHeroSrc(FALLBACK_IMAGE)}
-			/>
-			{showHeroModal && (
-				<Modal onClose={() => setShowHeroModal(false)}>
-					<img
-						className="property-img-lg"
-						src={heroSrc}
-						alt="Front"
-						onClick={() => setShowHeroModal(false)}
-						onError={() => setHeroSrc(FALLBACK_IMAGE)}
-					/>
-				</Modal>
-			)}
-			<div className="property-imgs-wrap">
-				{galleryUrls.map((url, idx) => (
-					<GalleryTile key={url + idx} url={url} />
-				))}
-				{oddGallery && <LastImage openTour={openTour} />}
+		<div className="w-full">
+			{/* Hero — full width, fixed height */}
+			<div className="relative w-full h-[460px] overflow-hidden bg-[#dadad5] cursor-pointer"
+				onClick={() => setLightbox(heroSrc)}>
+				<img
+					className="w-full h-full object-cover"
+					src={heroSrc}
+					alt="Property"
+					onError={() => setHeroSrc(FALLBACK_IMAGE)}
+				/>
+				{thumbUrls.length > 0 && (
+					<span className="absolute bottom-4 right-4 bg-black/60 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+						1 / {thumbUrls.length + 1} photos
+					</span>
+				)}
 			</div>
-			{!oddGallery && <LastImage openTour={openTour} />}
+
+			{/* Thumbnail strip */}
+			{thumbUrls.length > 0 && (
+				<div className="flex gap-2 px-1 pt-2 overflow-x-auto scrollbar-hide">
+					{thumbUrls.slice(0, 10).map((url, idx) => (
+						<ThumbTile
+							key={url + idx}
+							url={url}
+							onClick={() => setLightbox(url)}
+						/>
+					))}
+				</div>
+			)}
+
+			{lightbox && <Lightbox src={lightbox} onClose={() => setLightbox(null)} />}
 		</div>
+	);
+};
+
+const ThumbTile = ({ url, onClick }) => {
+	const [src, setSrc] = useState(url);
+	const [failed, setFailed] = useState(false);
+	useEffect(() => { setSrc(url); setFailed(false); }, [url]);
+	if (failed) return null;
+	return (
+		<img
+			className="flex-shrink-0 w-24 h-16 object-cover rounded cursor-pointer opacity-80 hover:opacity-100 transition-opacity"
+			src={src}
+			alt=""
+			onClick={onClick}
+			onError={() => setFailed(true)}
+		/>
 	);
 };
 
