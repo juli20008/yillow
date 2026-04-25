@@ -24,32 +24,24 @@ const PreviewItem = ({ property, onSelect }) => {
 
 	return (
 		<div
-			className="flex flex-col cursor-pointer transition-colors duration-150 hover:bg-surface border-b border-stroke last:border-0"
+			className="flex items-center gap-3 px-4 py-3.5 cursor-pointer transition-colors duration-150 hover:bg-surface"
 			onClick={() => onSelect && onSelect(property)}
 		>
-			{/* Image — full width, 16:9-ish aspect ratio */}
-			<div className="relative w-full h-[160px] overflow-hidden">
+			{/* Thumbnail — 82×66, cover, 4px radius, status pill bottom-left */}
+			<div className="relative flex-shrink-0 w-[82px] h-[66px] rounded overflow-hidden">
 				<img
 					className="w-full h-full object-cover"
 					src={imgSrc}
 					alt=""
 					onError={() => setImgSrc(FALLBACK_IMAGE)}
 				/>
-				<span className="absolute bottom-2 left-2 bg-black/55 text-white text-[9px] font-semibold uppercase tracking-wide px-2 py-[3px] rounded-full leading-tight">
+				<span className="absolute bottom-1 left-1.5 bg-black/55 text-white text-[9px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded-full leading-tight">
 					{statusLabel(property.status)}
 				</span>
-				<button
-					className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 text-gray-400 hover:text-rose-400 transition-colors"
-					type="button"
-					aria-label="Save property"
-					onClick={(e) => e.stopPropagation()}
-				>
-					<Heart size={13} strokeWidth={1.5} />
-				</button>
 			</div>
 
-			{/* Text block */}
-			<div className="px-3 py-2.5 flex flex-col gap-[3px]">
+			{/* Text block — vertically centered with thumbnail */}
+			<div className="flex-1 min-w-0 flex flex-col justify-center gap-[3px]">
 				<div className="text-[15px] font-bold text-ink leading-tight">
 					{price}
 				</div>
@@ -58,16 +50,28 @@ const PreviewItem = ({ property, onSelect }) => {
 				</div>
 				<div className="text-[11px] text-gray-400">
 					{property.bed}&nbsp;bd&nbsp;&middot;&nbsp;{property.bath}&nbsp;ba
-					{property.sqft ? ` · ${property.sqft.toLocaleString()} sqft` : ""}
+					{property.sqft
+						? ` · ${property.sqft.toLocaleString()} sqft`
+						: ""}
 				</div>
 			</div>
+
+			{/* Heart — self-centered, thin stroke, stops propagation */}
+			<button
+				className="flex-shrink-0 self-center p-1 text-gray-300 hover:text-rose-400 transition-colors"
+				type="button"
+				aria-label="Save property"
+				onClick={(e) => e.stopPropagation()}
+			>
+				<Heart size={15} strokeWidth={1.5} />
+			</button>
 		</div>
 	);
 };
 
 const PropertyPreviewList = ({ properties, onSelect }) => (
-	<div className="w-[260px] font-sans overflow-hidden">
-		<div className="max-h-[480px] overflow-y-auto">
+	<div className="w-[288px] font-sans overflow-hidden">
+		<div className="max-h-[368px] overflow-y-auto divide-y divide-stroke">
 			{properties.map((p) => (
 				<PreviewItem key={p.id} property={p} onSelect={onSelect} />
 			))}
