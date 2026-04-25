@@ -42,9 +42,22 @@ const Property = ({ property, onClose }) => {
 					<Detail property={property} />
 				</div>
 
-				{/* Right — sticky Tour form */}
+				{/* Right — sticky Tour form (DB-backed properties only) */}
 				<div className="w-[300px] flex-shrink-0 sticky top-6">
-					<Tour property={property} setShowTour={onClose} inline />
+					{String(property.id).startsWith("mls_") ? (
+						<div className="rounded-2xl border border-stroke shadow-softMd p-6 bg-white text-center">
+							<div className="text-2xl mb-3">🏡</div>
+							<p className="text-sm font-semibold text-ink mb-1">
+								Interested in this home?
+							</p>
+							<p className="text-xs text-inkMuted leading-relaxed">
+								This is an MLS listing. Contact your agent or use the search
+								to find a listed property and book a showing directly.
+							</p>
+						</div>
+					) : (
+						<Tour property={property} setShowTour={onClose} inline />
+					)}
 				</div>
 			</div>
 		</div>
