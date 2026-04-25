@@ -62,18 +62,42 @@
 PWA -> webapp
 
 
-Claude, look at this screenshot. 
-C:\Users\Hrana\OneDrive\MiaSoft\yillow\image-9.png
-  I've implemented the new top-gallery layout, but I'm seeing a weird pattern: two images load correctly, and two are blank (white space).
 
-Based on the Console logs, it seems like the ImageResolver is processing many URLs, but some might be failing or returning empty.
+Claude, carefully analyze the layout differences between image-5.png (Yollow - current) and image-4.png (REW - target). Yillow looks a bit cluttered compared to the clean, high-end feel of REW. Please apply the following CSS/Tailwind refinements to the PropertyPreviewList and the Popup container:
 
-Please check PropertyTop.js and the image rendering logic for these 3 things:
+1. 容器与阴影 (The Container)
+Shadow: Remove the hard border. Apply a much softer, larger-radius drop shadow (e.g., shadow-2xl with custom rgba(0,0,0,0.08)).
 
-URL Validation: Are some of the image URLs in my mock data/Repliers API returning 404 or empty strings? Add a fallback image (placeholder) if the URL is invalid.
+Radius: Increase the border-radius to 16px for a modern, mobile-app feel.
 
-Grid Layout CSS: Is the CSS grid/flexbox forcing a height for empty containers? If an image fails to load, the whole slot shouldn't just be a white block.
+Header Style: In image-2, the 'X PROPERTIES IN THIS AREA' text is smaller, uppercase, with increased letter-spacing (tracking-wider) and a lighter grey color. Adjust our header to match this.
 
-Loading State: Are we trying to render the images before the GET_IMAGES action (seen in Redux logs) has fully populated the state?
+2. 图片与比例 (Image & Aspect Ratio)
+Size: Our current thumbnails in image-1 are too small and squished. Increase the width/height ratio.
 
-Task: Fix the image gallery so that it only renders valid images, and ensure there are no 'ghost' white boxes when an image is missing or loading.
+Object-Fit: Ensure object-fit: cover and add a subtle 4px border-radius to the images themselves.
+
+Badge: Move the 'ACTIVE' badge to the bottom-left. Make it a pill-shaped overlay with a semi-transparent dark background, rather than a solid block.
+
+3. 文字排版与间距 (Typography & Spacing)
+Spacing: This is the most important part. Increase the gap or margin-bottom between listing items. Each item needs more 'breathing room'.
+
+Price: Make the price font-bold and slightly larger than the address.
+
+Hierarchy: The address and stats (3 bd, 2 ba) should be in a secondary color (medium grey) and a slightly smaller font size than the price.
+
+Vertical Alignment: Ensure the entire text block is perfectly center-aligned vertically with the thumbnail image.
+
+4. 交互细节 (Interaction)
+Hover State: Add a very subtle background change (e.g., hover:bg-gray-50) when hovering over a listing item.
+
+Heart Icon: Move the favorite icon to the middle-right of the text area, not floating in the corner. Use a very thin stroke for the heart.
+
+Please refine the Tailwind classes in PropertyPreviewList.js to achieve this 'Pixel Perfect' match."
+
+🔍 为什么 REW 看起来更专业？（MBA 视角下的 UI 心理学）
+Julie，作为数据专家，你可以这样理解 UI 的优化：
+
+数据降噪： 图 1 的信息密度太高，用户的眼睛不知道该落在哪。图 2 通过浅灰色弱化了非核心信息（地址、面积），强出了核心信息（价格、图片）。
+
+感知质量： 适当的留白（Padding）传达了一种“不急迫”的自信感。在奢侈品或高端地产网页中，留白就是金钱。
