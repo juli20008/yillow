@@ -235,11 +235,10 @@ const MyMap = withScriptjs(
 					<div className="absolute top-3 left-3 z-10">
 						<select
 							data-testid="transaction-type-filter"
-							value={props.transactionType || "all"}
+							value={props.transactionType || "sale"}
 							onChange={(e) => props.setTransactionType(e.target.value)}
 							className="rounded-md border border-[#d6d6d0] bg-white px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[#2d2d2d] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2a6f97] cursor-pointer"
 						>
-							<option value="all">All Listings</option>
 							<option value="sale">For Sale</option>
 							<option value="lease">For Lease</option>
 						</select>
