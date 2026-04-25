@@ -10,9 +10,6 @@
 	.search-pg-ctrl {
 		grid-template-columns: 1fr 35.2vw;
 	}
-	.map-ctnr {
-		width: 100%;
-	}
 }
 
 .search-wrap {

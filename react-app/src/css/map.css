@@ -1,6 +1,6 @@
 .map-ctnr {
 	height: calc(100vh - 85px);
-	width: 56vw;
+	width: 100%;
 }
 
 /* ── InfoWindow container ───────────────────────────────────────────── */
