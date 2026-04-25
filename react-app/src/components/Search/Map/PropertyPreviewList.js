@@ -71,9 +71,6 @@ const PreviewItem = ({ property, onSelect }) => {
 
 const PropertyPreviewList = ({ properties, onSelect }) => (
 	<div className="w-[288px] font-sans overflow-hidden">
-		<div className="px-4 pt-3.5 pb-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-400 border-b border-stroke">
-			{properties.length}&nbsp;Propert{properties.length === 1 ? "y" : "ies"}&nbsp;in this area
-		</div>
 		<div className="max-h-[368px] overflow-y-auto divide-y divide-stroke">
 			{properties.map((p) => (
 				<PreviewItem key={p.id} property={p} onSelect={onSelect} />
