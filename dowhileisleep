@@ -1,0 +1,11 @@
+Do below while I sleep. It has to be done one at a time and create a test-driven snap test when one task is complete. Only when the test is pass can you move to the next task:
+
+1. in the maximum width screen, the list card view on right hand side of map is a bit wide， set maximum wide to smaller (about 4/5 of current width). Remove ‘House for Sale’ on the list card
+
+2. remove top blank part on the popup list on clustering dot/dots, make the margin smaller on the popups
+
+3. On property detail modal, add navigation left and right arrows on gallary. when click on small photo do not pop up big photo - just show the selected small photo on top. 
+
+4. Add a quick drop down to select For Sale/For Lease on top left corner of map
+
+
