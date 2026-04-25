@@ -29,8 +29,7 @@ const PropertyCard = ({ property, setOver }) => {
 				</div>
 				<div className="card-desc text-[14px] text-[#666660]">
 					{property?.bed} bd{property?.bed > 1 && <span>s</span>}{" "}
-					{property?.bath} ba {property?.sqft} sqft{" "}
-					{property?.status === "Active" && <span>- House for Sale</span>}
+					{property?.bath} ba {property?.sqft} sqft
 				</div>
 				<div className="card-address text-[16px] font-medium leading-snug text-[#353531]">
 					{property?.street}, {property?.city}, {property?.state}{" "}

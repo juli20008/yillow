@@ -19,9 +19,6 @@ const PropertyTop = ({ property }) => {
 				className="absolute inset-0 h-full w-full object-cover"
 				onError={() => setSrc(FALLBACK_IMAGE)}
 			/>
-			<div className="card-events relative m-3 inline-flex w-fit rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#2d2d2d]">
-				Listed on {property?.listing_date}
-			</div>
 		</div>
 	);
 };
