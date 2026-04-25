@@ -19,6 +19,7 @@ const SearchArea = () => {
 	const [type, setType] = useState("");
 	const [bed, setBed] = useState(0);
 	const [bath, setBath] = useState(0);
+	const [transactionType, setTransactionType] = useState("all"); // "all" | "sale" | "lease"
 
 	const getInitialCenter = (param) => {
 		if (!param) return { lat: 37.0903, lng: -95.7129 };
@@ -68,9 +69,16 @@ const SearchArea = () => {
 				if (bath === 0) return true;
 				if (bath === 4) return prop?.bath >= 4;
 				return prop?.bath === bath || prop?.bath - 0.5 === bath;
+			})
+			.filter((prop) => {
+				if (transactionType === "all") return true;
+				const tt = (prop?.transaction_type || prop?.status || "").toLowerCase();
+				if (transactionType === "lease") return tt.includes("lease");
+				// "sale" — anything not explicitly a lease
+				return !tt.includes("lease");
 			});
 		setPropArr(arr);
-	}, [min, max, type, bed, bath, properties]);
+	}, [min, max, type, bed, bath, transactionType, properties]);
 
 	useEffect(() => {
 		return () => {
@@ -101,7 +109,7 @@ const SearchArea = () => {
 				isMarkerShown
 				googleMapURL={googleMapURL}
 				loadingElement={<div style={{ height: `100%` }} />}
-				containerElement={<div className="map-ctnr overflow-hidden border-r border-[#dcdcd7]" />}
+				containerElement={<div className="map-ctnr relative overflow-hidden border-r border-[#dcdcd7]" />}
 				mapElement={<div style={{ height: `100%` }} />}
 				markers={propArr}
 				center={center}
@@ -110,6 +118,8 @@ const SearchArea = () => {
 				onBoundsChange={handleMapBoundsChange}
 				enableAreaSearch={false}
 				syncCenter={false}
+				transactionType={transactionType}
+				setTransactionType={setTransactionType}
 			/>
 			<List
 				min={min}
