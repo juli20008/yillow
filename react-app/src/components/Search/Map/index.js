@@ -130,15 +130,18 @@ const MyMap = withScriptjs(
 		};
 
 		const handleClusterClick = (clusterId, lat, lng, count) => {
-			// Case A — large cluster: just zoom in
+			// Case A — large cluster: fit the map to the cluster's leaves bounding box.
+			// react-google-maps v9 exposes fitBounds but not setZoom, so we derive
+			// the target viewport from the actual leaf coordinates instead.
 			if (count > 10) {
 				setPreviewCluster(null);
-				const expansionZoom = Math.min(
-					supercluster.getClusterExpansionZoom(clusterId),
-					20
-				);
-				mapRef.current.setZoom(expansionZoom);
-				mapRef.current.panTo({ lat, lng });
+				const leaves = supercluster.getLeaves(clusterId, Infinity);
+				const bounds = new window.google.maps.LatLngBounds();
+				leaves.forEach((leaf) => {
+					const [lLng, lLat] = leaf.geometry.coordinates;
+					bounds.extend(new window.google.maps.LatLng(lLat, lLng));
+				});
+				mapRef.current.fitBounds(bounds);
 				return;
 			}
 			// Case B — small cluster (≤10): show inline preview popup
