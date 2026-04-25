@@ -9,6 +9,12 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
 
+    # Cross-origin session cookie (Vercel frontend → Render backend).
+    # SameSite=None requires Secure=True; only enable in production.
+    _is_prod = os.environ.get('FLASK_ENV') == 'production'
+    SESSION_COOKIE_SAMESITE = 'None' if _is_prod else 'Lax'
+    SESSION_COOKIE_SECURE = _is_prod
+
     _db_url = os.environ.get('DATABASE_URL', '')
     SQLALCHEMY_DATABASE_URI = _db_url.replace('postgres://', 'postgresql://') if _db_url else None
 
