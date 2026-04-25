@@ -17,6 +17,7 @@ const Search = () => {
 	const [type, setType] = useState("");
 	const [bed, setBed] = useState(0);
 	const [bath, setBath] = useState(0);
+	const [transactionType, setTransactionType] = useState("all");
 	const [center] = useState({ lat: 43.7417, lng: -79.3733 }); // Toronto GTA
 	const [propArr, setPropArr] = useState([]);
 	const [over, setOver] = useState({ id: 0 });
@@ -50,9 +51,15 @@ const Search = () => {
 				if (bath === 0) return true;
 				if (bath === 4) return prop?.bath >= 4;
 				return prop?.bath === bath || prop?.bath - 0.5 === bath;
+			})
+			.filter((prop) => {
+				if (transactionType === "all") return true;
+				const tt = (prop?.transaction_type || prop?.status || "").toLowerCase();
+				if (transactionType === "lease") return tt.includes("lease");
+				return !tt.includes("lease");
 			});
 		setPropArr(arr);
-	}, [min, max, type, bed, bath, properties]);
+	}, [min, max, type, bed, bath, transactionType, properties]);
 
 	useEffect(() => {
 		return () => {
@@ -79,7 +86,7 @@ const Search = () => {
 				isMarkerShown
 				googleMapURL={googleMapURL}
 				loadingElement={<div style={{ height: `100%` }} />}
-				containerElement={<div className="map-ctnr overflow-hidden border-r border-[#dcdcd7]" />}
+				containerElement={<div className="map-ctnr relative overflow-hidden border-r border-[#dcdcd7]" />}
 				mapElement={<div style={{ height: `100%` }} />}
 				markers={propArr}
 				center={center}
@@ -87,6 +94,8 @@ const Search = () => {
 				onBoundsChange={handleMapBoundsChange}
 				enableAreaSearch={false}
 				syncCenter={false}
+				transactionType={transactionType}
+				setTransactionType={setTransactionType}
 			/>
 			<List
 				min={min}
