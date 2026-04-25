@@ -98,3 +98,44 @@
 	font-size: 20px;
 	height: 60vh;
 }
+
+/* ── Inline sidebar variant ──────────────────────────────────────────── */
+.tour-sidebar {
+	background: white;
+	border-radius: 16px;
+	border: 1px solid #f1f5f9;
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+	overflow: hidden;
+	width: 100%;
+}
+
+.tour-sidebar-header {
+	padding: 16px 20px 14px;
+	font-size: 15px;
+	font-weight: 700;
+	color: #0f172a;
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.tour-sidebar-body {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	white-space: normal;
+}
+
+/* Reset tour-btm constraints when inside the sidebar */
+.tour-sidebar .tour-btm {
+	height: auto;
+	white-space: normal;
+	padding: 0;
+	gap: 16px;
+}
+
+/* Tighten the property thumbnail inside the sidebar */
+.tour-sidebar .tour-img {
+	border-radius: 8px;
+	max-height: 160px;
+	object-fit: cover;
+}
