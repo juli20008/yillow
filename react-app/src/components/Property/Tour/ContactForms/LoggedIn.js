@@ -40,8 +40,10 @@ const LoggedIn = ({
 			const data = await dispatch(appointmentActions.addAppointment(appointment));
 
 			if (!data.errors) {
-				// dispatch to update property info
-				await dispatch(propertyActions.getThisProperty(property.id));
+				// only refetch for seeded properties (integer IDs); MLS listings aren't in the DB
+				if (Number.isInteger(property.id)) {
+					await dispatch(propertyActions.getThisProperty(property.id));
+				}
 				// notify appointment booked
 				setNotificationMsg(
 					"Appointment booked. You can access it from Appointments"

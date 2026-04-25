@@ -87,9 +87,14 @@ def add_appointment():
         if not property_id or not date or not time:
             return {"errors": ["property_id, date, and time are required"]}, 400
 
+        try:
+            property_id = int(property_id)
+        except (ValueError, TypeError):
+            return {"errors": ["Online booking is not available for this listing. Please contact an agent directly."]}, 400
+
         property_obj = Property.query.get(property_id)
         if not property_obj:
-            return {"errors": ["Property does not exists"]}
+            return {"errors": ["Property does not exist"]}, 404
 
         if not is_future_datetime(date, time):
             return {"errors": ["Date cannot be prior to current date"]}
