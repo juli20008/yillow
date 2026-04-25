@@ -11,6 +11,7 @@ import Supercluster from "supercluster";
 
 import { Modal } from "../../../context/Modal";
 import Property from "../../Property";
+import PropertyPreviewList from "./PropertyPreviewList";
 
 // Builds a circle+count SVG icon for cluster Markers.
 // Must be called after the Google Maps script has loaded (window.google is available).
@@ -43,6 +44,8 @@ const MyMap = withScriptjs(
 		const [clusters, setClusters] = useState([]);
 		const [mapBounds, setMapBounds] = useState(null);
 		const [mapZoom, setMapZoom] = useState(props.zoom || 4);
+		// { clusterId, lat, lng, leaves[] } when a small cluster is clicked
+		const [previewCluster, setPreviewCluster] = useState(null);
 
 		const iconPin = {
 			path: "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z",
@@ -126,13 +129,28 @@ const MyMap = withScriptjs(
 			mapRef.current.fitBounds(bounds);
 		};
 
-		const handleClusterClick = (clusterId, lat, lng) => {
-			const expansionZoom = Math.min(
-				supercluster.getClusterExpansionZoom(clusterId),
-				20
-			);
-			mapRef.current.setZoom(expansionZoom);
-			mapRef.current.panTo({ lat, lng });
+		const handleClusterClick = (clusterId, lat, lng, count) => {
+			// Case A — large cluster: just zoom in
+			if (count > 10) {
+				setPreviewCluster(null);
+				const expansionZoom = Math.min(
+					supercluster.getClusterExpansionZoom(clusterId),
+					20
+				);
+				mapRef.current.setZoom(expansionZoom);
+				mapRef.current.panTo({ lat, lng });
+				return;
+			}
+			// Case B — small cluster (≤10): show inline preview popup
+			// Toggle off if the same cluster is clicked again
+			if (previewCluster?.clusterId === clusterId) {
+				setPreviewCluster(null);
+				return;
+			}
+			const leaves = supercluster
+				.getLeaves(clusterId, Infinity)
+				.map((f) => f.properties);
+			setPreviewCluster({ clusterId, lat, lng, leaves });
 		};
 
 		const handleIdle = () => {
@@ -189,6 +207,7 @@ const MyMap = withScriptjs(
 					defaultCenter={{ lat: props.center.lat, lng: props.center.lng }}
 					defaultOptions={{ fullscreenControl: false, streetViewControl: false }}
 					onIdle={handleIdle}
+					onClick={() => setPreviewCluster(null)}
 					onDragEnd={() => {
 						if (props.enableAreaSearch !== false) searchArea();
 					}}
@@ -222,14 +241,28 @@ const MyMap = withScriptjs(
 						} = item.properties;
 
 						if (isCluster) {
+							const isPreviewOpen =
+								previewCluster?.clusterId === clusterId;
 							return (
 								<Marker
 									key={`cluster-${clusterId}`}
 									position={{ lat, lng }}
 									icon={clusterIcon(count)}
-									onClick={() => handleClusterClick(clusterId, lat, lng)}
+									onClick={() =>
+										handleClusterClick(clusterId, lat, lng, count)
+									}
 									zIndex={500}
-								/>
+								>
+									{isPreviewOpen && (
+										<InfoWindow
+											onCloseClick={() => setPreviewCluster(null)}
+										>
+											<PropertyPreviewList
+												properties={previewCluster.leaves}
+											/>
+										</InfoWindow>
+									)}
+								</Marker>
 							);
 						}
 

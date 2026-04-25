@@ -6,8 +6,7 @@
 .gm-style .gm-style-iw-c {
 	padding-right: 5px !important;
 	padding-bottom: 5px !important;
-	max-width: 200px !important;
-	max-height: 70px !important;
+	max-width: 320px !important;
 	min-width: 0px !important;
 	position: absolute;
 	box-sizing: border-box;
@@ -16,8 +15,14 @@
 	left: 0;
 	transform: translate(-50%, -100%);
 	background-color: white;
-	border-radius: 0px;
-	box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.3);
+	border-radius: 8px !important;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Allow the preview popup's scroll area to reach full height */
+.gm-style .gm-style-iw-d {
+	overflow: auto !important;
+	max-height: 420px !important;
 }
 
 .gm-div {
@@ -81,6 +86,119 @@
 	width: 56px;
 	height: 56px;
 	font-size: 15px;
+}
+
+/* ── PropertyPreviewList popup ──────────────────────────────────────── */
+.ppl-wrap {
+	width: 290px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.ppl-header {
+	padding: 10px 12px 6px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #6b6b63;
+	border-bottom: 1px solid #efefeb;
+}
+
+.ppl-scroll {
+	max-height: 360px;
+	overflow-y: auto;
+}
+
+.ppl-item {
+	display: grid;
+	grid-template-columns: 72px 1fr 24px;
+	gap: 10px;
+	align-items: center;
+	padding: 10px 12px;
+	border-bottom: 1px solid #f3f3ef;
+	transition: background 0.1s;
+}
+
+.ppl-item:last-child {
+	border-bottom: none;
+}
+
+.ppl-item:hover {
+	background: #fafaf7;
+}
+
+.ppl-thumb-wrap {
+	position: relative;
+	width: 72px;
+	height: 56px;
+	flex-shrink: 0;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.ppl-thumb {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.ppl-status-tag {
+	position: absolute;
+	bottom: 3px;
+	left: 3px;
+	background: rgba(0, 0, 0, 0.58);
+	color: #fff;
+	font-size: 9px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	padding: 1px 4px;
+	border-radius: 2px;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.ppl-details {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.ppl-price {
+	font-size: 15px;
+	font-weight: 700;
+	color: #1a1a18;
+	line-height: 1.2;
+}
+
+.ppl-address {
+	font-size: 11px;
+	color: #4a4a44;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.ppl-stats {
+	font-size: 11px;
+	color: #7a7a72;
+}
+
+.ppl-heart {
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	color: #aaa;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: color 0.15s;
+}
+
+.ppl-heart:hover {
+	color: #e05252;
 }
 
 @media screen and (max-width: 650px) {
