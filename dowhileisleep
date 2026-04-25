@@ -54,3 +54,5 @@ Options: "For Sale" and "For Lease".
 State: Ensure selecting an option filters the visible markers accordingly.
 
 Verification: Test ensuring the dropdown exists and triggers a state update.
+
+task 5 remove save search button and the heart icon from clustering popups
