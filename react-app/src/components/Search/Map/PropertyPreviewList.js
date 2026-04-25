@@ -2,7 +2,15 @@ import { useState } from "react";
 import { Heart } from "lucide-react";
 import { resolveUrl, FALLBACK_IMAGE } from "../../../utils/imageResolver";
 
-const PreviewItem = ({ property }) => {
+const statusLabel = (s) => {
+	if (!s) return "Active";
+	const l = s.toLowerCase();
+	if (l === "a") return "Active";
+	if (l === "u") return "Sold";
+	return s;
+};
+
+const PreviewItem = ({ property, onSelect }) => {
 	const rawSrc =
 		resolveUrl(property.image_urls?.[0] || property.front_img) ||
 		FALLBACK_IMAGE;
@@ -14,49 +22,61 @@ const PreviewItem = ({ property }) => {
 		maximumFractionDigits: 0,
 	}).format(property.price);
 
-	const statusLabel = (s) => {
-		if (!s) return "For Sale";
-		if (s.toLowerCase() === "a") return "For Sale";
-		if (s.toLowerCase() === "u") return "Sold";
-		return s;
-	};
-
 	return (
-		<div className="ppl-item">
-			<div className="ppl-thumb-wrap">
+		<div
+			className="flex items-center gap-3 px-4 py-3.5 cursor-pointer transition-colors duration-150 hover:bg-surface"
+			onClick={() => onSelect && onSelect(property)}
+		>
+			{/* Thumbnail — 82×66, cover, 4px radius, status pill bottom-left */}
+			<div className="relative flex-shrink-0 w-[82px] h-[66px] rounded overflow-hidden">
 				<img
-					className="ppl-thumb"
+					className="w-full h-full object-cover"
 					src={imgSrc}
 					alt=""
 					onError={() => setImgSrc(FALLBACK_IMAGE)}
 				/>
-				<span className="ppl-status-tag">{statusLabel(property.status)}</span>
+				<span className="absolute bottom-1 left-1.5 bg-black/55 text-white text-[9px] font-semibold uppercase tracking-wide px-2 py-[2px] rounded-full leading-tight">
+					{statusLabel(property.status)}
+				</span>
 			</div>
-			<div className="ppl-details">
-				<div className="ppl-price">{price}</div>
-				<div className="ppl-address">
+
+			{/* Text block — vertically centered with thumbnail */}
+			<div className="flex-1 min-w-0 flex flex-col justify-center gap-[3px]">
+				<div className="text-[15px] font-bold text-ink leading-tight">
+					{price}
+				</div>
+				<div className="text-[11px] text-inkMuted truncate">
 					{property.street}, {property.city}
 				</div>
-				<div className="ppl-stats">
-					{property.bed} bd &middot; {property.bath} ba
-					{property.sqft ? ` · ${property.sqft.toLocaleString()} sqft` : ""}
+				<div className="text-[11px] text-gray-400">
+					{property.bed}&nbsp;bd&nbsp;&middot;&nbsp;{property.bath}&nbsp;ba
+					{property.sqft
+						? ` · ${property.sqft.toLocaleString()} sqft`
+						: ""}
 				</div>
 			</div>
-			<button className="ppl-heart" aria-label="Save property" type="button">
+
+			{/* Heart — self-centered, thin stroke, stops propagation */}
+			<button
+				className="flex-shrink-0 self-center p-1 text-gray-300 hover:text-rose-400 transition-colors"
+				type="button"
+				aria-label="Save property"
+				onClick={(e) => e.stopPropagation()}
+			>
 				<Heart size={15} strokeWidth={1.5} />
 			</button>
 		</div>
 	);
 };
 
-const PropertyPreviewList = ({ properties }) => (
-	<div className="ppl-wrap">
-		<div className="ppl-header">
-			{properties.length} Propert{properties.length === 1 ? "y" : "ies"} in this area
+const PropertyPreviewList = ({ properties, onSelect }) => (
+	<div className="w-[288px] font-sans overflow-hidden">
+		<div className="px-4 pt-3.5 pb-2.5 text-[10px] font-semibold tracking-[0.12em] uppercase text-gray-400 border-b border-stroke">
+			{properties.length}&nbsp;Propert{properties.length === 1 ? "y" : "ies"}&nbsp;in this area
 		</div>
-		<div className="ppl-scroll">
+		<div className="max-h-[368px] overflow-y-auto divide-y divide-stroke">
 			{properties.map((p) => (
-				<PreviewItem key={p.id} property={p} />
+				<PreviewItem key={p.id} property={p} onSelect={onSelect} />
 			))}
 		</div>
 	</div>

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory, useLocation } from "react-router-dom";
 import {
 	withScriptjs,
 	withGoogleMap,
@@ -35,6 +35,7 @@ const clusterIcon = (count) => {
 const MyMap = withScriptjs(
 	withGoogleMap((props) => {
 		const history = useHistory();
+		const location = useLocation();
 		const { areaParam } = useParams();
 		const mapRef = useRef(null);
 
@@ -46,6 +47,8 @@ const MyMap = withScriptjs(
 		const [mapZoom, setMapZoom] = useState(props.zoom || 4);
 		// { clusterId, lat, lng, leaves[] } when a small cluster is clicked
 		const [previewCluster, setPreviewCluster] = useState(null);
+		// Full property object when a listing detail modal is open
+		const [selectedProperty, setSelectedProperty] = useState(null);
 
 		const iconPin = {
 			path: "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z",
@@ -202,6 +205,29 @@ const MyMap = withScriptjs(
 			return `${(price / 1000).toFixed(0)}K`;
 		};
 
+		const handlePropertySelect = (property) => {
+			setPreviewCluster(null);
+			setSelectedProperty(property);
+			history.replace({ search: `?selected=${property.id}` });
+		};
+
+		const closeSelectedProperty = () => {
+			setSelectedProperty(null);
+			history.replace({ search: "" });
+		};
+
+		// Restore modal from URL on mount (e.g. after page refresh with ?selected=123)
+		useEffect(() => {
+			const params = new URLSearchParams(location.search);
+			const selectedId = params.get("selected");
+			if (selectedId && props.markers?.length) {
+				const found = props.markers.find(
+					(m) => String(m.id) === selectedId
+				);
+				if (found) setSelectedProperty(found);
+			}
+		}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
 		return (
 			<>
 				<GoogleMap
@@ -262,6 +288,7 @@ const MyMap = withScriptjs(
 										>
 											<PropertyPreviewList
 												properties={previewCluster.leaves}
+												onSelect={handlePropertySelect}
 											/>
 										</InfoWindow>
 									)}
@@ -317,6 +344,15 @@ const MyMap = withScriptjs(
 						);
 					})}
 				</GoogleMap>
+
+				{selectedProperty && (
+					<Modal onClose={closeSelectedProperty}>
+						<Property
+							property={selectedProperty}
+							onClose={closeSelectedProperty}
+						/>
+					</Modal>
+				)}
 			</>
 		);
 	})
