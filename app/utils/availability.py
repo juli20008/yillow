@@ -64,7 +64,7 @@ def agent_is_available(agent_id, date_str, time_str, appointment_id=None):
 def candidate_agent_ids_for_property(property_obj):
     agent_ids = []
 
-    if property_obj and property_obj.listing_agent_id:
+    if property_obj and getattr(property_obj, 'listing_agent_id', None):
         agent_ids.append(property_obj.listing_agent_id)
 
     if property_obj and property_obj.zip:

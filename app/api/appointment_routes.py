@@ -1,7 +1,7 @@
 from sqlalchemy import or_
 from flask import Blueprint, jsonify, request
 from sqlalchemy.orm import selectinload
-from app.models import db, User, Property, Appointment
+from app.models import db, User, Property, Appointment, MlsListing
 from flask_login import current_user, login_required
 from datetime import datetime
 from app.forms import AddAppointmentForm
@@ -87,14 +87,28 @@ def add_appointment():
         if not property_id or not date or not time:
             return {"errors": ["property_id, date, and time are required"]}, 400
 
-        try:
-            property_id = int(property_id)
-        except (ValueError, TypeError):
-            return {"errors": ["Online booking is not available for this listing. Please contact an agent directly."]}, 400
+        # Resolve property_obj and determine which FK column to use
+        mls_listing_id = None
+        pid = None
+        pid_str = str(property_id)
 
-        property_obj = Property.query.get(property_id)
-        if not property_obj:
-            return {"errors": ["Property does not exist"]}, 404
+        if pid_str.startswith("mls_"):
+            raw_id = pid_str[4:]
+            try:
+                mls_listing_id = int(raw_id)
+            except ValueError:
+                return {"errors": ["Invalid listing ID"]}, 400
+            property_obj = MlsListing.query.get(mls_listing_id)
+            if not property_obj:
+                return {"errors": ["Listing not found"]}, 404
+        else:
+            try:
+                pid = int(pid_str)
+            except (ValueError, TypeError):
+                return {"errors": ["Invalid property ID"]}, 400
+            property_obj = Property.query.get(pid)
+            if not property_obj:
+                return {"errors": ["Property not found"]}, 404
 
         if not is_future_datetime(date, time):
             return {"errors": ["Date cannot be prior to current date"]}
@@ -109,13 +123,13 @@ def add_appointment():
             return {"errors": ["You already have another appointment at this timeslot"]}
 
         exists = Appointment.query.filter(
-            Appointment.property_id == property_id,
             Appointment.date == date,
             Appointment.time == time,
+            Appointment.mls_listing_id == mls_listing_id if mls_listing_id else Appointment.property_id == pid,
         ).first()
 
         if exists:
-            return {"errors": ["Timeslot not avaliable"]}
+            return {"errors": ["Timeslot not available"]}
 
         if selected_agent_id:
             selected_agent = User.query.get(selected_agent_id)
@@ -134,7 +148,8 @@ def add_appointment():
             date=date,
             time=time,
             message=message,
-            property_id=property_id,
+            property_id=pid,
+            mls_listing_id=mls_listing_id,
             agent_id=selected_agent.id,
         )
 
