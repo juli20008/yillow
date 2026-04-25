@@ -6,17 +6,29 @@ import {
 	GoogleMap,
 	Marker,
 	InfoWindow,
-	OverlayView,
 } from "react-google-maps";
 import Supercluster from "supercluster";
 
 import { Modal } from "../../../context/Modal";
 import Property from "../../Property";
 
-const clusterSizeClass = (count) => {
-	if (count < 10) return "cluster-sm";
-	if (count < 100) return "cluster-md";
-	return "cluster-lg";
+// Builds a circle+count SVG icon for cluster Markers.
+// Must be called after the Google Maps script has loaded (window.google is available).
+const clusterIcon = (count) => {
+	const size = count < 10 ? 36 : count < 100 ? 44 : 54;
+	const fontSize = count < 100 ? 14 : 15;
+	const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
+		<circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 2}"
+			fill="#2a6f97" stroke="white" stroke-width="2.5"/>
+		<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+			fill="white" font-family="Arial,sans-serif" font-weight="700"
+			font-size="${fontSize}">${count}</text>
+	</svg>`;
+	return {
+		url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
+		scaledSize: new window.google.maps.Size(size, size),
+		anchor: new window.google.maps.Point(size / 2, size / 2),
+	};
 };
 
 const MyMap = withScriptjs(
@@ -211,22 +223,13 @@ const MyMap = withScriptjs(
 
 						if (isCluster) {
 							return (
-								<OverlayView
+								<Marker
 									key={`cluster-${clusterId}`}
 									position={{ lat, lng }}
-									mapPaneName="overlayMouseTarget"
-									getPixelPositionOffset={(w, h) => ({
-										x: -(w / 2),
-										y: -(h / 2),
-									})}
-								>
-									<div
-										className={`cluster-marker ${clusterSizeClass(count)}`}
-										onClick={() => handleClusterClick(clusterId, lat, lng)}
-									>
-										{count}
-									</div>
-								</OverlayView>
+									icon={clusterIcon(count)}
+									onClick={() => handleClusterClick(clusterId, lat, lng)}
+									zIndex={500}
+								/>
 							);
 						}
 
