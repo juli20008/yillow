@@ -1,7 +1,7 @@
 const LogoBrand = () => (
 	<div className="flex items-baseline gap-3 whitespace-nowrap">
 		<span
-			style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontWeight: 600 }}
+			style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontWeight: 700 }}
 			className="text-[22px] leading-none tracking-tight text-[#0f172a]"
 		>
 			Showings Today
