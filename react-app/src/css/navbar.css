@@ -28,12 +28,6 @@
 	position: relative;
 }
 
-.nav > a img {
-	display: block;
-	width: min(360px, 60vw);
-	max-width: 100%;
-	height: auto;
-}
 
 .nav-rt .photo {
 	width: 36px;

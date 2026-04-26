@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import LogoutButton from "../../auth/LogoutButton";
+import LogoBrand from "../LogoBrand";
 
 import no_photo from "../../../assets/no_photo.svg";
 
@@ -41,7 +42,7 @@ const UserBar = () => {
 				</NavLink>
 			</div>
 			<NavLink to="/" exact={true}>
-				<img src="/Yollow.svg" alt="Showings Today" />
+				<LogoBrand />
 			</NavLink>
 			<div className="nav-rt">
 				<NavLink className="btn-font-lt" to="/chats" exact={true}>

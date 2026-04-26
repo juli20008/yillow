@@ -6,6 +6,7 @@ import { useNotification } from "../../context/Notification";
 
 import AgentBar from "./Agent";
 import UserBar from "./User";
+import LogoBrand from "./LogoBrand";
 
 import { Modal } from "../../context/Modal";
 import Login from "./Login";
@@ -89,7 +90,7 @@ const NavBar = () => {
 					</NavLink>
 				</div>
 				<NavLink to="/" exact={true}>
-					<img src="/Yollow.svg" alt="Showings Today" />
+					<LogoBrand />
 				</NavLink>
 				<div className="nav-rt">
 					<button className="btn-font-lt" onClick={() => setShowLogin(true)}>

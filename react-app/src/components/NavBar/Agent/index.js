@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import LogoutButton from "../../auth/LogoutButton";
+import LogoBrand from "../LogoBrand";
 
 const AgentBar = () => {
 	return (
@@ -12,7 +13,7 @@ const AgentBar = () => {
 				</NavLink>
 			</div>
 			<NavLink to="/" exact={true}>
-				<img src="/Yollow.svg" alt="Showings Today" />
+				<LogoBrand />
 			</NavLink>
 			<div className="nav-rt">
 				<NavLink to="/chats" exact={true}>
