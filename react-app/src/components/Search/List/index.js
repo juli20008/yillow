@@ -136,12 +136,6 @@ const List = ({
 						>
 							<i className="fa-solid fa-sliders mr-2"></i>Filter
 						</button>
-						<button
-							className="rounded-md border border-[#222] bg-[#222] px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-[#111]"
-							type="button"
-						>
-							Save Search
-						</button>
 						{!areaParam && showMapAreaButton && url && (
 							<button
 								className="btn rounded-md border border-[#d6d6d0] bg-white px-3 py-2 text-xs text-[#40403b] transition hover:bg-[#f7f7f3]"
