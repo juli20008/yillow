@@ -196,20 +196,22 @@
 @media screen and (max-width: 650px) {
 	.search-pg-ctrl {
 		grid-template-columns: 1fr;
+		grid-template-rows: auto 1fr;
+		height: calc(100vh - 57px);
+		overflow: hidden;
+	}
+
+	/* Search bar floats above the map */
+	.search-wrap {
+		order: -1;
 		height: auto;
 		overflow: visible;
 	}
 
-	.search-bar-wrap {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.search-list {
-		height: 60vh;
-	}
-
-	.search-pagination {
-		padding: 0 20px 20px;
+	/* Hide property cards, pagination and empty state */
+	.search-list,
+	.search-pagination,
+	.search-no-results {
+		display: none !important;
 	}
 }

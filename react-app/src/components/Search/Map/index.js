@@ -12,6 +12,7 @@ import Supercluster from "supercluster";
 import { Modal } from "../../../context/Modal";
 import Property from "../../Property";
 import PropertyPreviewList from "./PropertyPreviewList";
+import BottomSheet from "./BottomSheet";
 
 // Builds a circle+count SVG icon for cluster Markers.
 // Must be called after the Google Maps script has loaded (window.google is available).
@@ -45,10 +46,17 @@ const MyMap = withScriptjs(
 		const [clusters, setClusters] = useState([]);
 		const [mapBounds, setMapBounds] = useState(null);
 		const [mapZoom, setMapZoom] = useState(props.zoom || 4);
-		// { clusterId, lat, lng, leaves[] } when a small cluster is clicked
 		const [previewCluster, setPreviewCluster] = useState(null);
-		// Full property object when a listing detail modal is open
 		const [selectedProperty, setSelectedProperty] = useState(null);
+		// Mobile bottom sheet: array of properties (1 for pin, N for cluster)
+		const [bottomSheet, setBottomSheet] = useState(null);
+		const [isMobile, setIsMobile] = useState(() => window.innerWidth < 650);
+
+		useEffect(() => {
+			const handler = () => setIsMobile(window.innerWidth < 650);
+			window.addEventListener("resize", handler);
+			return () => window.removeEventListener("resize", handler);
+		}, []);
 
 		const iconPin = {
 			path: "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z",
@@ -133,11 +141,9 @@ const MyMap = withScriptjs(
 		};
 
 		const handleClusterClick = (clusterId, lat, lng, count) => {
-			// Case A — large cluster: fit the map to the cluster's leaves bounding box.
-			// react-google-maps v9 exposes fitBounds but not setZoom, so we derive
-			// the target viewport from the actual leaf coordinates instead.
 			if (count > 10) {
 				setPreviewCluster(null);
+				setBottomSheet(null);
 				const leaves = supercluster.getLeaves(clusterId, Infinity);
 				const bounds = new window.google.maps.LatLngBounds();
 				leaves.forEach((leaf) => {
@@ -147,15 +153,17 @@ const MyMap = withScriptjs(
 				mapRef.current.fitBounds(bounds);
 				return;
 			}
-			// Case B — small cluster (≤10): show inline preview popup
-			// Toggle off if the same cluster is clicked again
+			const leaves = supercluster
+				.getLeaves(clusterId, Infinity)
+				.map((f) => f.properties);
+			if (isMobile) {
+				setBottomSheet(leaves);
+				return;
+			}
 			if (previewCluster?.clusterId === clusterId) {
 				setPreviewCluster(null);
 				return;
 			}
-			const leaves = supercluster
-				.getLeaves(clusterId, Infinity)
-				.map((f) => f.properties);
 			setPreviewCluster({ clusterId, lat, lng, leaves });
 		};
 
@@ -250,7 +258,7 @@ const MyMap = withScriptjs(
 					defaultCenter={{ lat: props.center.lat, lng: props.center.lng }}
 					defaultOptions={{ fullscreenControl: false, streetViewControl: false }}
 					onIdle={handleIdle}
-					onClick={() => setPreviewCluster(null)}
+					onClick={() => { setPreviewCluster(null); setBottomSheet(null); }}
 					onDragEnd={() => {
 						if (props.enableAreaSearch !== false) searchArea();
 					}}
@@ -315,17 +323,24 @@ const MyMap = withScriptjs(
 						const icon =
 							props.over.id === marker.id ? iconOver : iconPin;
 						const showInfo =
-							isOpen.openInfoWindowMarkerId === marker.id ||
-							isOver.id === marker.id;
+							!isMobile &&
+							(isOpen.openInfoWindowMarkerId === marker.id ||
+							isOver.id === marker.id);
 
 						return (
 							<Marker
 								key={`pin-${marker.id}`}
 								position={{ lat, lng }}
 								icon={icon}
-								onClick={() => setShowModal({ show: marker.id })}
-								onMouseOver={() => setIsOpen({ openInfoWindowMarkerId: marker.id })}
-								onMouseOut={() => setIsOpen({ openInfoWindowMarkerId: 0 })}
+								onClick={() => {
+									if (isMobile) {
+										setBottomSheet([marker]);
+									} else {
+										setShowModal({ show: marker.id });
+									}
+								}}
+								onMouseOver={() => !isMobile && setIsOpen({ openInfoWindowMarkerId: marker.id })}
+								onMouseOut={() => !isMobile && setIsOpen({ openInfoWindowMarkerId: 0 })}
 								zIndex={props.over.id === marker.id ? 9999 : 0}
 							>
 								{showInfo && (
@@ -360,6 +375,14 @@ const MyMap = withScriptjs(
 							onClose={closeSelectedProperty}
 						/>
 					</Modal>
+				)}
+
+				{bottomSheet && (
+					<BottomSheet
+						properties={bottomSheet}
+						onSelect={handlePropertySelect}
+						onClose={() => setBottomSheet(null)}
+					/>
 				)}
 			</>
 		);

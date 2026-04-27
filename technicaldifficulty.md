@@ -102,7 +102,11 @@ Julie，作为数据专家，你可以这样理解 UI 的优化：
 
 感知质量： 适当的留白（Padding）传达了一种“不急迫”的自信感。在奢侈品或高端地产网页中，留白就是金钱。
 
-两大块：
+
+
+几大块：
 
 1. Google Auth
 2. Lead Distribution Logic
+3. 字段调整（details），better filters
+4. Disclaimer - cookie - map jump to your location

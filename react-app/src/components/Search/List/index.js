@@ -1,6 +1,7 @@
 import apiFetch from "../../../utils/apiFetch";
 import { useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import ReactDOM from "react-dom";
 
 import PropertyCard from "./PropertyCard";
 
@@ -223,8 +224,8 @@ const List = ({
 					</div>
 				</div>
 			)}
-			{showFilters && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4">
+			{showFilters && ReactDOM.createPortal(
+				<div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/45 p-4">
 					<div className="w-full max-w-3xl rounded-lg bg-white shadow-2xl">
 						<div className="flex items-center justify-between border-b border-[#ecece8] px-6 py-4">
 							<h3 className="text-2xl font-semibold text-[#2c2c2a]">Filters</h3>
@@ -334,7 +335,8 @@ const List = ({
 							</button>
 						</div>
 					</div>
-				</div>
+				</div>,
+				document.body
 			)}
 		</div>
 	);
