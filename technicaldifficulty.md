@@ -107,6 +107,9 @@ Julie，作为数据专家，你可以这样理解 UI 的优化：
 几大块：
 
 1. Google Auth
-2. Lead Distribution Logic
+2. Lead Distribution Logic：
+Assign the lead to an agent with the postal code as service area and shows available for the time booked - if meet these two criteria, assign to the agent that rank highest in client review score.
+
+Allow agent to asign the lead to another agent with the postal code as service area and shows available for the time booked.
 3. 字段调整（details），better filters
 4. Disclaimer - cookie - map jump to your location
