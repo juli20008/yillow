@@ -67,14 +67,13 @@ Migrate(app, db)
 socketio.init_app(app)
 
 # Application Security
-# FRONTEND_URL is set in Render env vars (e.g. https://yillow.vercel.app).
-# Falls back to localhost:3000 for local development.
-_allowed_origins = [
-    o.strip()
-    for o in os.environ.get("FRONTEND_URL", "http://localhost:3000").split(",")
-    if o.strip()
-]
-CORS(app, origins=_allowed_origins, supports_credentials=True)
+# Hardcode known origins + pick up any extras from FRONTEND_URL env var.
+_allowed_origins = list({
+    "http://localhost:3000",
+    "https://yillow.vercel.app",
+    *[o.strip() for o in os.environ.get("FRONTEND_URL", "").split(",") if o.strip()],
+})
+CORS(app, resources={r"/api/*": {"origins": _allowed_origins}}, supports_credentials=True)
 
 
 # Since we are deploying with Docker and Flask,
