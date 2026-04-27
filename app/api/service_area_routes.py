@@ -1,26 +1,21 @@
-from flask import Blueprint, jsonify, session, request
+import re
+from flask import Blueprint, request
 from app.models import User, db, AgentArea
-from flask_login import current_user, login_user, logout_user, login_required
-from app.forms import ServiceAreaForm
-
+from flask_login import current_user, login_required
 
 service_area_routes = Blueprint('service_areas', __name__)
 
-def validation_errors_to_error_messages(validation_errors):
-    """
-    Simple function that turns the WTForms validation errors into a simple list
-    """
-    errorMessages = []
-    for field in validation_errors:
-        for error in validation_errors[field]:
-            errorMessages.append(f'{field} : {error}')
-    return errorMessages
+_US_ZIP    = re.compile(r'^\d{5}$')
+_CA_POSTAL = re.compile(r'^[A-Z]\d[A-Z]\s?\d[A-Z]\d$')
 
 
 @service_area_routes.route("/<zip>", methods=["DELETE"])
 @login_required
 def delete_service_area(zip):
-    service = AgentArea.query.filter(AgentArea.zip == zip, AgentArea.agent_id == current_user.id).first()
+    service = AgentArea.query.filter(
+        AgentArea.zip == zip,
+        AgentArea.agent_id == current_user.id
+    ).first()
 
     if not service:
         return {"errors": ["Unauthorized"]}, 401
@@ -28,36 +23,32 @@ def delete_service_area(zip):
     db.session.delete(service)
     db.session.commit()
 
-    user = User.query.get(current_user.id)
+    return {"user": User.query.get(current_user.id).to_dict()}
 
-    return {"user": user.to_dict()}
 
 @service_area_routes.route("/", methods=["POST"])
 @login_required
 def add_service_area():
-
-    # If current user is not agent, not supposed to be here
     if not current_user.agent:
-        return {'errors': ["Unauthorized"]}, 401
+        return {"errors": ["Unauthorized"]}, 401
 
-    form = ServiceAreaForm()
-    form['csrf_token'].data = request.cookies['csrf_token']
-    if form.validate_on_submit():
-        raw = form.data["zip"].strip().upper()
-        # Normalise Canadian postal code to "A1A 1A1" format
-        if len(raw) == 6 and raw[:3].isalnum() and raw[3:].isalnum():
-            raw = f"{raw[:3]} {raw[3:]}"
+    data = request.get_json(silent=True) or {}
+    raw = (data.get("zip") or "").strip().upper()
 
-        service = AgentArea.query.filter(AgentArea.agent_id == current_user.id, AgentArea.zip == raw).first()
-        if service:
-            return {"errors": ["Zip already exists"]}
+    if not raw:
+        return {"errors": ["Please enter a postal code"]}, 400
 
-        service = AgentArea(agent_id=current_user.id, zip=raw)
-        db.session.add(service)
-        db.session.commit()
+    if not _US_ZIP.match(raw) and not _CA_POSTAL.match(raw):
+        return {"errors": ["Enter a valid US zip (12345) or Canadian postal code (A1A 1A1)"]}, 400
 
-        user = User.query.get(current_user.id)
+    # Normalise CA without space: M5V2T6 → M5V 2T6
+    if len(raw) == 6 and raw.isalnum():
+        raw = f"{raw[:3]} {raw[3:]}"
 
-        return {"user": user.to_dict()}
+    if AgentArea.query.filter_by(agent_id=current_user.id, zip=raw).first():
+        return {"errors": ["This postal code is already in your service areas"]}
 
-    return {'errors': validation_errors_to_error_messages(form.errors)}, 401
+    db.session.add(AgentArea(agent_id=current_user.id, zip=raw))
+    db.session.commit()
+
+    return {"user": User.query.get(current_user.id).to_dict()}
