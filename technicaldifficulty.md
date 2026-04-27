@@ -101,3 +101,12 @@ Julie，作为数据专家，你可以这样理解 UI 的优化：
 数据降噪： 图 1 的信息密度太高，用户的眼睛不知道该落在哪。图 2 通过浅灰色弱化了非核心信息（地址、面积），强出了核心信息（价格、图片）。
 
 感知质量： 适当的留白（Padding）传达了一种“不急迫”的自信感。在奢侈品或高端地产网页中，留白就是金钱。
+
+
+
+几大块：
+
+1. Google Auth
+2. Lead Distribution Logic
+3. 字段调整（details），better filters
+4. Disclaimer - cookie - map jump to your location

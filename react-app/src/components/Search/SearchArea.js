@@ -19,7 +19,7 @@ const SearchArea = () => {
 	const [type, setType] = useState("");
 	const [bed, setBed] = useState(0);
 	const [bath, setBath] = useState(0);
-	const [transactionType, setTransactionType] = useState("all"); // "all" | "sale" | "lease"
+	const [transactionType, setTransactionType] = useState("sale"); // "sale" | "lease"
 
 	const getInitialCenter = (param) => {
 		if (!param) return { lat: 37.0903, lng: -95.7129 };
@@ -71,10 +71,8 @@ const SearchArea = () => {
 				return prop?.bath === bath || prop?.bath - 0.5 === bath;
 			})
 			.filter((prop) => {
-				if (transactionType === "all") return true;
 				const tt = (prop?.transaction_type || prop?.status || "").toLowerCase();
 				if (transactionType === "lease") return tt.includes("lease");
-				// "sale" — anything not explicitly a lease
 				return !tt.includes("lease");
 			});
 		setPropArr(arr);

@@ -1,6 +1,6 @@
 .map-ctnr {
-	height: calc(100vh - 85px);
-	width: 56vw;
+	height: calc(100vh - 57px);
+	width: 100%;
 }
 
 /* ── InfoWindow container ───────────────────────────────────────────── */
@@ -82,6 +82,6 @@
 
 @media screen and (max-width: 650px) {
 	.map-ctnr {
-		display: none;
+		height: 100%;
 	}
 }

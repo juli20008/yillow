@@ -1,7 +1,7 @@
 .search-pg-ctrl {
 	display: grid;
 	grid-template-columns: 56vw 44vw;
-	height: calc(100vh - 83px);
+	height: calc(100vh - 57px);
 	overflow: hidden;
 	background-color: #f3f3f1;
 }
@@ -9,9 +9,6 @@
 @media screen and (min-width: 1280px) {
 	.search-pg-ctrl {
 		grid-template-columns: 1fr 35.2vw;
-	}
-	.map-ctnr {
-		width: 100%;
 	}
 }
 
@@ -199,20 +196,22 @@
 @media screen and (max-width: 650px) {
 	.search-pg-ctrl {
 		grid-template-columns: 1fr;
+		grid-template-rows: auto 1fr;
+		height: calc(100vh - 57px);
+		overflow: hidden;
+	}
+
+	/* Search bar floats above the map */
+	.search-wrap {
+		order: -1;
 		height: auto;
 		overflow: visible;
 	}
 
-	.search-bar-wrap {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.search-list {
-		height: 60vh;
-	}
-
-	.search-pagination {
-		padding: 0 20px 20px;
+	/* Hide property cards, pagination and empty state */
+	.search-list,
+	.search-pagination,
+	.search-no-results {
+		display: none !important;
 	}
 }
