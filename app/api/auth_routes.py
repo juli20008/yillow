@@ -1,7 +1,9 @@
-from flask import Blueprint, jsonify, session, request
+import os
+from flask import Blueprint, jsonify, session, request, redirect, url_for
 from app.models import User, db
 from app.forms import LoginForm
 from app.forms import SignUpForm, UserUpdateForm
+from app.oauth_client import oauth
 from flask_login import current_user, login_user, logout_user, login_required
 from app.s3_helpers import (
     upload_file_to_s3, allowed_file, get_unique_filename)
@@ -115,6 +117,56 @@ def sign_up():
         login_user(user)
         return user.to_dict()
     return {'errors': validation_errors_to_error_messages(form.errors)}, 401
+
+
+@auth_routes.route('/google')
+def google_login():
+    redirect_uri = url_for('auth.google_callback', _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+
+@auth_routes.route('/google/callback')
+def google_callback():
+    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+    try:
+        token = oauth.google.authorize_access_token()
+    except Exception:
+        return redirect(f'{frontend_url}?auth_error=1')
+
+    user_info = token.get('userinfo')
+    if not user_info:
+        return redirect(f'{frontend_url}?auth_error=1')
+
+    google_id = user_info['sub']
+    email = user_info.get('email', '')
+
+    # Find by google_id first, then by email (link existing account)
+    user = User.query.filter_by(google_id=google_id).first()
+    if not user:
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user.google_id = google_id
+            if not user.photo:
+                user.photo = user_info.get('picture')
+        else:
+            # New user — derive a unique username from their Google name
+            base = (user_info.get('name') or email.split('@')[0]).replace(' ', '')
+            username, suffix = base, 1
+            while User.query.filter_by(username=username).first():
+                username = f'{base}{suffix}'
+                suffix += 1
+
+            user = User(
+                username=username,
+                email=email,
+                google_id=google_id,
+                photo=user_info.get('picture'),
+            )
+            db.session.add(user)
+        db.session.commit()
+
+    login_user(user)
+    return redirect(frontend_url)
 
 
 @auth_routes.route('/unauthorized')

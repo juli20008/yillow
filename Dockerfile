@@ -54,8 +54,9 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 
 EXPOSE ${PORT}
 
+# Run migrations then start the server
 # eventlet worker required by Flask-SocketIO; -w 1 is mandatory with eventlet
-CMD gunicorn \
+CMD flask db upgrade && gunicorn \
         --worker-class eventlet \
         --workers 1 \
         --bind "0.0.0.0:${PORT}" \

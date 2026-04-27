@@ -7,6 +7,7 @@ from flask_login import LoginManager
 
 from .socket import socketio
 from .models import db, User
+from .oauth_client import oauth
 from .api.auth_routes import auth_routes
 from .api.property_routes import property_routes
 from .api.agent_routes import agent_routes
@@ -39,6 +40,17 @@ def load_user(id):
 app.cli.add_command(seed_commands)
 
 app.config.from_object(Config)
+
+# Google OAuth
+oauth.init_app(app)
+oauth.register(
+    name='google',
+    client_id=os.environ.get('GOOGLE_CLIENT_ID'),
+    client_secret=os.environ.get('GOOGLE_CLIENT_SECRET'),
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={'scope': 'openid email profile'},
+)
+
 app.register_blueprint(auth_routes, url_prefix='/api/auth')
 app.register_blueprint(property_routes, url_prefix='/api/properties')
 app.register_blueprint(agent_routes, url_prefix='/api/agents')

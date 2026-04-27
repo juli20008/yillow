@@ -11,7 +11,8 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
-    hashed_password = db.Column(db.String(255), nullable=False)
+    hashed_password = db.Column(db.String(255), nullable=True)
+    google_id = db.Column(db.String(255), unique=True, nullable=True)
     phone = db.Column(db.String(40))
     agent = db.Column(db.Boolean(), default=False)
     license_num = db.Column(db.String(20))
@@ -51,7 +52,9 @@ class User(db.Model, UserMixin):
         self.hashed_password = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password, password)
+        if not self.hashed_password:
+            return False
+        return check_password_hash(self.hashed_password, password)
 
     def to_dict(self):
         if self.agent:
