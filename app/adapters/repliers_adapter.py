@@ -1,5 +1,5 @@
 """
-Repliers API → Yillow StandardPropertySchema adapter.
+Repliers API → Tourit.ca StandardPropertySchema adapter.
 
 This is the only file that knows about Repliers-specific field names.
 To switch to TREB/CREA direct feeds, add a new adapter alongside this

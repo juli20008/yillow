@@ -70,7 +70,9 @@ socketio.init_app(app)
 # Hardcode known origins + pick up any extras from FRONTEND_URL env var.
 _allowed_origins = list({
     "http://localhost:3000",
-    "https://yillow.vercel.app",
+    "https://yillow.vercel.app",   # legacy — keep until DNS cutover
+    "https://tourit.ca",
+    "https://www.tourit.ca",
     *[o.strip() for o in os.environ.get("FRONTEND_URL", "").split(",") if o.strip()],
 })
 CORS(app, resources={r"/api/*": {"origins": _allowed_origins}}, supports_credentials=True)

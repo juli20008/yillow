@@ -4,7 +4,7 @@ const LogoBrand = () => (
 			style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontWeight: 700 }}
 			className="text-[22px] leading-none tracking-tight text-[#0f172a]"
 		>
-			Showings Today
+			Tourit.ca
 		</span>
 		<span className="text-[#cbd5e1] font-light text-base select-none">|</span>
 		<span

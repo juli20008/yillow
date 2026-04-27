@@ -1,5 +1,5 @@
 """
-Yillow canonical property and agent schemas.
+Tourit.ca canonical property and agent schemas.
 
 All external data sources (Repliers, TREB, CREA, etc.) must be
 transformed into these schemas before reaching the database layer.

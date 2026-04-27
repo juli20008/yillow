@@ -66,12 +66,12 @@ const Contact = ({ property, today, hour, setShowSelectDate, setShowTour }) => {
 			{!isAgent && (
 				<div className="tour-tnc">
 					By pressing Request visit, you are contacting a buyer's agent, you
-					agree that Yillow Group and its affiliates, and real estate
+					agree that Tourit.ca and its affiliates, and real estate
 					professionals may call/text you about your inquiry, which may involve
 					use of automated means and prerecorded/artificial voices. You don't
 					need to consent as a condition of buying any property, goods or
 					services. Message/data rates may apply. You also agree to our Terms of
-					Use. Yillow does not endorse any real estate professionals. We may
+					Use. Tourit.ca does not endorse any real estate professionals. We may
 					share information about your recent and future site activity with your
 					agent to help them understand what you're looking for in a home.
 				</div>

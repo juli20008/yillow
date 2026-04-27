@@ -40,7 +40,7 @@ def _fetch_page(page_num, results_per_page=BATCH_SIZE, retries=3):
 
 
 def _to_db_dict(schema: StandardPropertySchema) -> dict:
-    """Map Yillow's StandardPropertySchema to the mls_listings table row dict."""
+    """Map Tourit.ca's StandardPropertySchema to the mls_listings table row dict."""
     return {
         'mls_number': schema.source_id,
         'status': schema.status,
