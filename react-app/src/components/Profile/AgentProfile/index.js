@@ -201,11 +201,11 @@ const AgentProfile = () => {
 					<div className="service-area-btn-wrap">
 						<input
 							className="agent-input"
-							type="number"
-							maxLength="5"
-							placeholder="5 digit postal code only"
+							type="text"
+							maxLength="7"
+							placeholder="12345 or A1A 1A1"
 							value={zip}
-							onChange={(e) => setZip(e.target.value)}
+							onChange={(e) => setZip(e.target.value.toUpperCase())}
 						/>
 						<button type="button" className="btn" onClick={addServiceAreas}>
 							Add

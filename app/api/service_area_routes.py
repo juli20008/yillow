@@ -43,12 +43,16 @@ def add_service_area():
     form = ServiceAreaForm()
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
+        raw = form.data["zip"].strip().upper()
+        # Normalise Canadian postal code to "A1A 1A1" format
+        if len(raw) == 6 and raw[:3].isalnum() and raw[3:].isalnum():
+            raw = f"{raw[:3]} {raw[3:]}"
 
-        service = AgentArea.query.filter(AgentArea.agent_id == current_user.id, AgentArea.zip == form.data["zip"]).first()
+        service = AgentArea.query.filter(AgentArea.agent_id == current_user.id, AgentArea.zip == raw).first()
         if service:
             return {"errors": ["Zip already exists"]}
 
-        service = AgentArea(agent_id=current_user.id, zip=form.data["zip"])
+        service = AgentArea(agent_id=current_user.id, zip=raw)
         db.session.add(service)
         db.session.commit()
 
