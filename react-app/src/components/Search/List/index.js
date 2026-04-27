@@ -1,9 +1,9 @@
 import apiFetch from "../../../utils/apiFetch";
 import { useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import ReactDOM from "react-dom";
 
 import PropertyCard from "./PropertyCard";
+import FilterPanel from "./FilterPanel";
 
 import noproperty from "../../../assets/no-property-nobg.svg";
 
@@ -224,119 +224,15 @@ const List = ({
 					</div>
 				</div>
 			)}
-			{showFilters && ReactDOM.createPortal(
-				<div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/45 p-4">
-					<div className="w-full max-w-3xl rounded-lg bg-white shadow-2xl">
-						<div className="flex items-center justify-between border-b border-[#ecece8] px-6 py-4">
-							<h3 className="text-2xl font-semibold text-[#2c2c2a]">Filters</h3>
-							<button
-								type="button"
-								className="text-[#777] hover:text-[#222]"
-								onClick={() => setShowFilters(false)}
-							>
-								<i className="fa-solid fa-xmark"></i>
-							</button>
-						</div>
-						<div className="grid gap-5 px-6 py-5 md:grid-cols-2">
-							<label className="text-sm text-[#52524d]">
-								Price Min
-								<select
-									className="mt-1 w-full rounded-md border border-[#d9d9d2] bg-white px-3 py-2 text-[#333]"
-									value={min}
-									onChange={(e) => setMin(parseInt(e.target.value, 10))}
-								>
-									<option value="0">No Min</option>
-									<option value="100000">$100,000+</option>
-									<option value="200000">$200,000+</option>
-									<option value="300000">$300,000+</option>
-									<option value="500000">$500,000+</option>
-									<option value="800000">$800,000+</option>
-								</select>
-							</label>
-							<label className="text-sm text-[#52524d]">
-								Price Max
-								<select
-									className="mt-1 w-full rounded-md border border-[#d9d9d2] bg-white px-3 py-2 text-[#333]"
-									value={max}
-									onChange={(e) => setMax(parseInt(e.target.value, 10))}
-								>
-									<option value="99999999999">No Max</option>
-									<option value="500000">$500,000</option>
-									<option value="700000">$700,000</option>
-									<option value="1000000">$1,000,000</option>
-									<option value="1500000">$1,500,000</option>
-									<option value="2000000">$2,000,000</option>
-								</select>
-							</label>
-							<label className="text-sm text-[#52524d]">
-								Property Type
-								<select
-									className="mt-1 w-full rounded-md border border-[#d9d9d2] bg-white px-3 py-2 text-[#333]"
-									value={type}
-									onChange={(e) => setType(e.target.value)}
-								>
-									<option value="">All</option>
-									<option value="Condominium">Condo</option>
-									<option value="Single Family">House</option>
-									<option value="Townhouse">Townhouse</option>
-									<option value="Manufactured Home">Mobile</option>
-									<option value="Cabin">Other</option>
-								</select>
-							</label>
-							<label className="text-sm text-[#52524d]">
-								Bedrooms
-								<select
-									className="mt-1 w-full rounded-md border border-[#d9d9d2] bg-white px-3 py-2 text-[#333]"
-									value={bed}
-									onChange={(e) => setBed(parseInt(e.target.value, 10))}
-								>
-									<option value="0">Any</option>
-									<option value="1">1</option>
-									<option value="2">2</option>
-									<option value="3">3</option>
-									<option value="4">4+</option>
-								</select>
-							</label>
-							<label className="text-sm text-[#52524d] md:col-span-2">
-								Bathrooms
-								<select
-									className="mt-1 w-full rounded-md border border-[#d9d9d2] bg-white px-3 py-2 text-[#333]"
-									value={bath}
-									onChange={(e) => setBath(parseInt(e.target.value, 10))}
-								>
-									<option value="0">Any</option>
-									<option value="1">1+</option>
-									<option value="2">2+</option>
-									<option value="3">3+</option>
-									<option value="4">4+</option>
-								</select>
-							</label>
-						</div>
-						<div className="flex items-center justify-between border-t border-[#ecece8] px-6 py-4">
-							<button
-								type="button"
-								className="text-sm font-semibold uppercase tracking-wide text-[#666]"
-								onClick={() => {
-									setMin(0);
-									setMax(99999999999);
-									setType("");
-									setBed(0);
-									setBath(0);
-								}}
-							>
-								Clear Filters
-							</button>
-							<button
-								type="button"
-								className="rounded-md bg-[#222] px-5 py-2 text-sm font-semibold uppercase tracking-wide text-white hover:bg-black"
-								onClick={() => setShowFilters(false)}
-							>
-								Done
-							</button>
-						</div>
-					</div>
-				</div>,
-				document.body
+			{showFilters && (
+				<FilterPanel
+					min={min} setMin={setMin}
+					max={max} setMax={setMax}
+					type={type} setType={setType}
+					bed={bed} setBed={setBed}
+					bath={bath} setBath={setBath}
+					onClose={() => setShowFilters(false)}
+				/>
 			)}
 		</div>
 	);

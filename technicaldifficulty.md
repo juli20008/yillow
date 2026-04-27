@@ -111,7 +111,14 @@ Julie，作为数据专家，你可以这样理解 UI 的优化：
 Assign the lead to an agent with the postal code as service area and shows available for the time booked - if meet these two criteria, assign to the agent that rank highest in client review score.
 
 Allow agent to asign the lead to another agent with the postal code as service area and shows available for the time booked.
-3. 字段调整（details），better filters
+
+After the user request the showing, on user's end it should show request sent, awaiting agent to confirm, on the agent side, agent has the button to confirm the showing, or has an option to revert with another best available time.
+
+3. 字段调整（details），better filters （connects to API first)
 4. Disclaimer - cookie - map jump to your location
 
 
+![alt text](image-7.png)
+![alt text](image-8.png)
+
+Marketing Strategy

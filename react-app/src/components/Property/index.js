@@ -34,17 +34,20 @@ const Property = ({ property, onClose }) => {
 			{/* ── Gallery (full width top) ── */}
 			<Images property={property} />
 
-			{/* ── Body: left content + right sticky sidebar ── */}
-			<div className="flex gap-8 px-8 py-7 items-start">
+			{/* ── Body: responsive layout ── */}
+			<div className="flex flex-col md:flex-row md:gap-8 md:px-8 md:py-7 md:items-start">
 
-				{/* Left — scrolls with the page */}
-				<div className="flex-1 min-w-0">
-					<Detail property={property} />
+				{/* Tour — sticky full-width on mobile, right sidebar on desktop */}
+				<div className="order-first md:order-last w-full md:w-[300px] md:flex-shrink-0
+				                sticky top-0 z-10 bg-white
+				                px-4 pt-4 pb-3 md:p-0 md:top-6
+				                border-b border-[#e8e8e2] md:border-none shadow-sm md:shadow-none">
+					<Tour property={property} setShowTour={onClose} inline />
 				</div>
 
-				{/* Right — sticky Tour form */}
-				<div className="w-[300px] flex-shrink-0 sticky top-6">
-					<Tour property={property} setShowTour={onClose} inline />
+				{/* Detail — scrolls below Tour on mobile, left column on desktop */}
+				<div className="flex-1 min-w-0 px-4 py-5 md:p-0">
+					<Detail property={property} />
 				</div>
 			</div>
 		</div>

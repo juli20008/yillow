@@ -1,18 +1,6 @@
 import { useState, useEffect } from "react";
 
-const REPLIERS_CDN = "https://cdn.repliers.io";
-const FALLBACK_IMAGE =
-	"https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=500&q=80";
-
-const resolveImageUrl = (url) => {
-	if (!url) return FALLBACK_IMAGE;
-	if (url.includes("yillow.s3")) return FALLBACK_IMAGE;
-	if (url.startsWith("http")) return url;
-	return `${REPLIERS_CDN}/${url.replace(/^\/+/, "")}`;
-};
-
 const SelectDate = ({
-	property,
 	available,
 	today,
 	setToday,
@@ -73,18 +61,6 @@ const SelectDate = ({
 				</div>
 				<div>Request this time</div>
 			</button>
-			<img
-				className="tour-img"
-				src={resolveImageUrl(property?.front_img)}
-				alt="Property"
-				onError={(e) => {
-					if (e.currentTarget.src !== FALLBACK_IMAGE) {
-						e.currentTarget.src = FALLBACK_IMAGE;
-						return;
-					}
-					e.currentTarget.onerror = null;
-				}}
-			/>
 		</>
 	);
 };

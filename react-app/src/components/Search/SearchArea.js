@@ -61,14 +61,14 @@ const SearchArea = () => {
 			.filter((prop) => prop?.price < max)
 			.filter((prop) => !type || prop?.type?.includes(type))
 			.filter((prop) => {
-				if (bed === 0) return true;
-				if (bed === 4) return prop?.bed >= 4;
+				if (bed === 0)  return true;
+				if (bed === -1) return prop?.bed === 0;
+				if (bed >= 5)   return prop?.bed >= 5;
 				return prop?.bed === bed;
 			})
 			.filter((prop) => {
 				if (bath === 0) return true;
-				if (bath === 4) return prop?.bath >= 4;
-				return prop?.bath === bath || prop?.bath - 0.5 === bath;
+				return prop?.bath >= bath || prop?.bath + 0.5 >= bath;
 			})
 			.filter((prop) => {
 				const tt = (prop?.transaction_type || prop?.status || "").toLowerCase();
